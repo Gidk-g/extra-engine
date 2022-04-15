@@ -11,6 +11,7 @@ IF YOU MAKE A MOD AND DISTRIBUTE A MODIFIED / RECOMPILED VERSION, YOU MUST OPEN 
 ## Credits / shoutouts
 - [gidk](https://github.com/Gidk-g) - Programmer (extra engine)
 - [PolybiusProxy](https://twitter.com/polybiusproxy) - .MP4 Loader Extension
+
 - [ninjamuffin99](https://twitter.com/ninja_muffin99) - Programmer
 - [PhantomArcade3K](https://twitter.com/phantomarcade3k) and [Evilsk8r](https://twitter.com/evilsk8r) - Art
 - [Kawaisprite](https://twitter.com/kawaisprite) - Musician
