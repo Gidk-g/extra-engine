@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.animation.FlxBaseAnimation;
 import flixel.graphics.frames.FlxAtlasFrames;
+import flixel.util.FlxColor;
 
 using StringTools;
 
@@ -16,6 +17,7 @@ class Character extends FlxSprite
 	public var curCharacter:String = 'bf';
 
 	public var holdTimer:Float = 0;
+	public var barColor:FlxColor = FlxColor.WHITE;
 
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
 	{
@@ -60,6 +62,7 @@ class Character extends FlxSprite
 
 				addOffset('scared', -2, -17);
 
+				barColor = FlxColor.fromRGB(165, 0, 77);
 				playAnim('danceRight');
 
 			case 'gf-christmas':
@@ -91,6 +94,7 @@ class Character extends FlxSprite
 
 				addOffset('scared', -2, -17);
 
+				barColor = FlxColor.fromRGB(165, 0, 77);
 				playAnim('danceRight');
 
 			case 'gf-car':
@@ -104,6 +108,7 @@ class Character extends FlxSprite
 				addOffset('danceLeft', 0);
 				addOffset('danceRight', 0);
 
+				barColor = FlxColor.fromRGB(165, 0, 77);
 				playAnim('danceRight');
 
 			case 'gf-pixel':
@@ -116,6 +121,7 @@ class Character extends FlxSprite
 				addOffset('danceLeft', 0);
 				addOffset('danceRight', 0);
 
+				barColor = FlxColor.fromRGB(165, 0, 77);
 				playAnim('danceRight');
 
 				setGraphicSize(Std.int(width * PlayState.daPixelZoom));
@@ -138,6 +144,7 @@ class Character extends FlxSprite
 				addOffset("singLEFT", -10, 10);
 				addOffset("singDOWN", 0, -30);
 
+				barColor = FlxColor.fromRGB(175, 102, 206);
 				playAnim('idle');
 			case 'spooky':
 				tex = Paths.getSparrowAtlas('spooky_kids_assets');
@@ -157,6 +164,7 @@ class Character extends FlxSprite
 				addOffset("singLEFT", 130, -10);
 				addOffset("singDOWN", -50, -130);
 
+				barColor = FlxColor.fromRGB(213, 126, 0);
 				playAnim('danceRight');
 			case 'mom':
 				tex = Paths.getSparrowAtlas('Mom_Assets');
@@ -176,6 +184,7 @@ class Character extends FlxSprite
 				addOffset("singLEFT", 250, -23);
 				addOffset("singDOWN", 20, -160);
 
+				barColor = FlxColor.fromRGB(216, 85, 142);
 				playAnim('idle');
 
 			case 'mom-car':
@@ -196,6 +205,7 @@ class Character extends FlxSprite
 				addOffset("singLEFT", 250, -23);
 				addOffset("singDOWN", 20, -160);
 
+				barColor = FlxColor.fromRGB(216, 85, 142);
 				playAnim('idle');
 			case 'monster':
 				tex = Paths.getSparrowAtlas('Monster_Assets');
@@ -211,6 +221,7 @@ class Character extends FlxSprite
 				addOffset("singRIGHT", -51);
 				addOffset("singLEFT", -30);
 				addOffset("singDOWN", -30, -40);
+				barColor = FlxColor.fromRGB(243, 255, 110);
 				playAnim('idle');
 			case 'monster-christmas':
 				tex = Paths.getSparrowAtlas('christmas/monsterChristmas');
@@ -226,6 +237,7 @@ class Character extends FlxSprite
 				addOffset("singRIGHT", -51);
 				addOffset("singLEFT", -30);
 				addOffset("singDOWN", -40, -94);
+				barColor = FlxColor.fromRGB(243, 255, 110);
 				playAnim('idle');
 			case 'pico':
 				tex = Paths.getSparrowAtlas('Pico_FNF_assetss');
@@ -262,6 +274,7 @@ class Character extends FlxSprite
 				addOffset("singLEFTmiss", 62, 64);
 				addOffset("singDOWNmiss", 210, -28);
 
+				barColor = FlxColor.fromRGB(183, 216, 85);
 				playAnim('idle');
 
 				flipX = true;
@@ -301,6 +314,7 @@ class Character extends FlxSprite
 				addOffset('deathConfirm', 37, 69);
 				addOffset('scared', -4);
 
+				barColor = FlxColor.fromRGB(49, 176, 209);
 				playAnim('idle');
 
 				flipX = true;
@@ -330,6 +344,7 @@ class Character extends FlxSprite
 				addOffset("singDOWNmiss", -11, -19);
 				addOffset("hey", 7, 4);
 
+				barColor = FlxColor.fromRGB(49, 176, 209);
 				playAnim('idle');
 
 				flipX = true;
@@ -355,6 +370,7 @@ class Character extends FlxSprite
 				addOffset("singRIGHTmiss", -30, 21);
 				addOffset("singLEFTmiss", 12, 24);
 				addOffset("singDOWNmiss", -11, -19);
+				barColor = FlxColor.fromRGB(49, 176, 209);
 				playAnim('idle');
 
 				flipX = true;
@@ -383,6 +399,7 @@ class Character extends FlxSprite
 				setGraphicSize(Std.int(width * 6));
 				updateHitbox();
 
+				barColor = FlxColor.fromRGB(123, 214, 246);
 				playAnim('idle');
 
 				width -= 100;
@@ -402,6 +419,7 @@ class Character extends FlxSprite
 				addOffset('firstDeath');
 				addOffset('deathLoop', -37);
 				addOffset('deathConfirm', -37);
+				barColor = FlxColor.fromRGB(123, 214, 246);
 				playAnim('firstDeath');
 				// pixel bullshit
 				setGraphicSize(Std.int(width * 6));
@@ -423,6 +441,7 @@ class Character extends FlxSprite
 				addOffset("singLEFT", 40);
 				addOffset("singDOWN", 14);
 
+				barColor = FlxColor.fromRGB(255, 170, 111);
 				playAnim('idle');
 
 				setGraphicSize(Std.int(width * 6));
@@ -442,6 +461,7 @@ class Character extends FlxSprite
 				addOffset("singRIGHT");
 				addOffset("singLEFT", 40);
 				addOffset("singDOWN", 14);
+				barColor = FlxColor.fromRGB(255, 170, 111);
 				playAnim('idle');
 
 				setGraphicSize(Std.int(width * 6));
@@ -465,7 +485,7 @@ class Character extends FlxSprite
 
 				setGraphicSize(Std.int(width * 6));
 				updateHitbox();
-
+				barColor = FlxColor.fromRGB(255, 60, 110);
 				playAnim('idle');
 
 				antialiasing = false;
@@ -493,7 +513,7 @@ class Character extends FlxSprite
 				addOffset("singRIGHT-alt", -1, -24);
 				addOffset("singLEFT-alt", -30, 15);
 				addOffset("singDOWN-alt", -30, -27);
-
+				barColor = FlxColor.fromRGB(196, 94, 174);
 				playAnim('idle');
 		}
 
