@@ -8,6 +8,7 @@ import openfl.utils.Assets as OpenFlAssets;
 class Paths
 {
 	inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
+	inline public static var VIDEO_EXT = "mp4";
 
 	static var currentLevel:String;
 
@@ -56,6 +57,11 @@ class Paths
 	inline static public function file(file:String, type:AssetType = TEXT, ?library:String)
 	{
 		return getPath(file, type, library);
+	}
+
+	static public function video(key:String)
+	{
+		return 'assets/videos/$key.$VIDEO_EXT';
 	}
 
 	inline static public function txt(key:String, ?library:String)
