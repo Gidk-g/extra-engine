@@ -1,0 +1,39 @@
+{
+    "weeks": [
+        {
+            "name": "",
+            "songs": ["Tutorial"],
+            "characters": ["", "bf", "gf"]
+        },
+        {
+            "name": "Daddy Dearest",
+            "songs": ["Bopeebo", "Fresh", "Dadbattle"],
+            "characters": ["dad", "bf", "gf"]
+        },
+        {
+            "name": "Spooky Month",
+            "songs": ["Spookeez", "South", "Monster"],
+            "characters": ["spooky", "bf", "gf"]
+        },
+        {
+            "name": "PICO",
+            "songs": ["Pico", "Philly", "Blammed"],
+            "characters": ["pico", "bf", "gf"]
+        },
+        {
+            "name": "MOMMY MUST MURDER",
+            "songs": ["Satin-Panties", "High", "Milf"],
+            "characters": ["mom", "bf", "gf"]
+        },
+        {
+            "name": "RED SNOW",
+            "songs": ["Cocoa", "Eggnog", "Winter-Horrorland"],
+            "characters": ["parents-christmas", "bf", "gf"]
+        },
+        {
+            "name": "hating simulator ft. moawling",
+            "songs": ["Senpai", "Roses", "Thorns"],
+            "characters": ["senpai", "bf", "gf"]
+        }
+    ]
+}

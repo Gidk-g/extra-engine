@@ -1,0 +1,47 @@
+{
+    "freeplay": [
+        {
+            "songs": ["Tutorial"],
+            "songCharacters": ["gf"],
+            "weekNum": 0,
+            "locked": false
+        },
+        {
+            "songs": ["Bopeebo", "Fresh", "Dadbattle"],
+            "songCharacters": ["dad"],
+            "weekNum": 1,
+            "locked": false
+        },
+        {
+            "songs": ["Spookeez", "South", "Monster"],
+            "songCharacters": ["spooky", "spooky", "monster"],
+            "weekNum": 2,
+            "locked": false
+        },
+        {
+            "songs": ["Pico", "Philly", "Blammed"],
+            "songCharacters": ["pico"],
+            "weekNum": 3,
+            "locked": false
+        },
+        {
+            "songs": ["Satin-Panties", "High", "Milf"],
+            "songCharacters": ["mom"],
+            "weekNum": 4,
+            "locked": false
+        },
+        {
+            "songs": ["Cocoa", "Eggnog", "Winter-Horrorland"],
+            "songCharacters": ["parents-christmas", "parents-christmas", "monster-christmas"],
+            "weekNum": 5,
+            "locked": false
+        },
+        {
+            "songs": ["Senpai", "Roses", "Thorns"],
+            "songCharacters": ["senpai", "senpai-angry", "spirit"],
+            "weekNum": 6,
+            "isPixelWeek": true,
+            "locked": false
+        }
+    ]
+}
