@@ -61,6 +61,10 @@ class PlayState extends MusicBeatState
 	private var gf:Character;
 	private var boyfriend:Boyfriend;
 
+	public var timeBarBG:FlxSprite;
+	public var timeBar:FlxBar;
+	public var timeTxt:FlxText;
+
 	private var notes:FlxTypedGroup<Note>;
 	private var unspawnNotes:Array<Note> = [];
 
@@ -117,6 +121,9 @@ class PlayState extends MusicBeatState
 	var scoreTxt:FlxText;
 
 	public static var campaignScore:Int = 0;
+
+	public var updateTime:Bool = true;
+	public var songPercent:Float = 0;
 
 	var defaultCamZoom:Float = 1.05;
 
@@ -754,6 +761,25 @@ class PlayState extends MusicBeatState
 		// healthBar
 		add(healthBar);
 
+		timeBarBG = new FlxSprite(0, 19).loadGraphic(Paths.image('healthBar'));
+		timeBarBG.screenCenter(X);
+		timeBarBG.scrollFactor.set();
+		timeBarBG.color = FlxColor.BLACK;
+		add(timeBarBG);
+
+		timeBar = new FlxBar(timeBarBG.x + 4, timeBarBG.y + 4, LEFT_TO_RIGHT, Std.int(timeBarBG.width - 8), Std.int(timeBarBG.height - 8), this,
+			'songPercent', 0, 1);
+		timeBar.scrollFactor.set();
+		timeBar.createFilledBar(0xFF000000, 0xFFFFFFFF);
+		add(timeBar);
+
+		timeTxt = new FlxText(timeBarBG.x + timeBarBG.width / 2, timeBarBG.y - timeBarBG.height / 2, 0, "", 32);
+		timeTxt.setFormat(Paths.font('vcr.ttf'), 32, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		timeTxt.scrollFactor.set();
+		timeTxt.borderSize = 2;
+		timeTxt.x -= timeTxt.width;
+		add(timeTxt);
+
 		scoreTxt = new FlxText(0, healthBarBG.y + 36, FlxG.width, "", 20);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
@@ -772,6 +798,9 @@ class PlayState extends MusicBeatState
 		notes.cameras = [camHUD];
 		healthBar.cameras = [camHUD];
 		healthBarBG.cameras = [camHUD];
+		timeBar.cameras = [camHUD];
+	    timeBarBG.cameras = [camHUD];
+		timeTxt.cameras = [camHUD];
 		iconP1.cameras = [camHUD];
 		iconP2.cameras = [camHUD];
 		scoreTxt.cameras = [camHUD];
@@ -837,6 +866,8 @@ class PlayState extends MusicBeatState
 		}
 
 		super.create();
+
+		updateTime = true;
 	}
 
 	function schoolIntro(?dialogueBox:DialogueBox):Void
@@ -1290,6 +1321,8 @@ class PlayState extends MusicBeatState
 				resyncVocals();
 			}
 
+			updateTime = true;
+
 			if (!startTimer.finished)
 				startTimer.active = true;
 			paused = false;
@@ -1384,6 +1417,19 @@ class PlayState extends MusicBeatState
 				// phillyCityLights.members[curLight].alpha -= (Conductor.crochet / 1000) * FlxG.elapsed;
 		}
 
+		if (updateTime) {
+			var curTime:Float = Conductor.songPosition;
+			if(curTime < 0) curTime = 0;
+			songPercent = (curTime / songLength);
+
+			var songCalc:Float = (songLength - curTime);
+
+			var secondsTotal:Int = Math.floor(songCalc / 1000);
+			if(secondsTotal < 0) secondsTotal = 0;
+
+			timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
+		}
+
 		super.update(elapsed);
 
 		scoreTxt.text = "Score:" + songScore;
@@ -1400,8 +1446,10 @@ class PlayState extends MusicBeatState
 				// gitaroo man easter egg
 				FlxG.switchState(new GitarooPause());
 			}
-			else
+			else {
 				openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+				updateTime = false;
+			}
 		
 			#if desktop
 			DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconRPC);
