@@ -125,6 +125,8 @@ class PlayState extends MusicBeatState
 	public var updateTime:Bool = true;
 	public var songPercent:Float = 0;
 
+	public static var songEnded:Bool = false;
+
 	var defaultCamZoom:Float = 1.05;
 
 	// how big to stretch the pixel art assets
@@ -164,6 +166,8 @@ class PlayState extends MusicBeatState
 
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
+
+		songEnded = false;
 
 		switch (SONG.song.toLowerCase())
 		{
@@ -508,13 +512,11 @@ class PlayState extends MusicBeatState
 							 // bg.setGraphicSize(Std.int(bg.width * 6));
 							 // bg.updateHitbox();
 							 add(bg);
-
 							 var fg:FlxSprite = new FlxSprite(posX, posY).loadGraphic(Paths.image('weeb/evilSchoolFG'));
 							 fg.scale.set(6, 6);
 							 // fg.setGraphicSize(Std.int(fg.width * 6));
 							 // fg.updateHitbox();
 							 add(fg);
-
 							 wiggleShit.effectType = WiggleEffectType.DREAMY;
 							 wiggleShit.waveAmplitude = 0.01;
 							 wiggleShit.waveFrequency = 60;
@@ -527,21 +529,17 @@ class PlayState extends MusicBeatState
 					/* 
 							  var waveSprite = new FlxEffectSprite(bg, [waveEffectBG]);
 							  var waveSpriteFG = new FlxEffectSprite(fg, [waveEffectFG]);
-
 							  // Using scale since setGraphicSize() doesnt work???
 							  waveSprite.scale.set(6, 6);
 							  waveSpriteFG.scale.set(6, 6);
 							  waveSprite.setPosition(posX, posY);
 							  waveSpriteFG.setPosition(posX, posY);
-
 							  waveSprite.scrollFactor.set(0.7, 0.8);
 							  waveSpriteFG.scrollFactor.set(0.9, 0.8);
-
 							  // waveSprite.setGraphicSize(Std.int(waveSprite.width * 6));
 							  // waveSprite.updateHitbox();
 							  // waveSpriteFG.setGraphicSize(Std.int(fg.width * 6));
 							  // waveSpriteFG.updateHitbox();
-
 							  add(waveSprite);
 							  add(waveSpriteFG);
 					  */
@@ -786,11 +784,11 @@ class PlayState extends MusicBeatState
 		scoreTxt.borderSize = 1.25;
 		add(scoreTxt);
 
-		iconP1 = new HealthIcon(boyfriend.curCharacter, true);
+		iconP1 = new HealthIcon(SONG.player1, true);
 		iconP1.y = healthBar.y - (iconP1.height / 2);
 		add(iconP1);
 
-		iconP2 = new HealthIcon(dad.curCharacter, false);
+		iconP2 = new HealthIcon(SONG.player2, false);
 		iconP2.y = healthBar.y - (iconP2.height / 2);
 		add(iconP2);
 
@@ -1776,6 +1774,8 @@ class PlayState extends MusicBeatState
 			#end
 		}
 
+		songEnded = true;
+
 		if (isStoryMode)
 		{
 			campaignScore += songScore;
@@ -2041,6 +2041,12 @@ class PlayState extends MusicBeatState
 				}
 			});
 
+			for (i in 0...controlArray.length)
+			{
+				if (controlArray[i])
+					noteMissPress(i);
+			}
+
 			if (possibleNotes.length > 0)
 			{
 				var daNote = possibleNotes[0];
@@ -2107,7 +2113,6 @@ class PlayState extends MusicBeatState
 								if (upP || rightP || downP || leftP)
 									noteCheck(leftP, daNote);
 						}
-
 					//this is already done in noteCheck / goodNoteHit
 					if (daNote.wasGoodHit)
 					{
@@ -2116,10 +2121,6 @@ class PlayState extends MusicBeatState
 						daNote.destroy();
 					}
 				 */
-			}
-			else
-			{
-				badNoteCheck();
 			}
 		}
 
@@ -2194,6 +2195,14 @@ class PlayState extends MusicBeatState
 		});
 	}
 
+	function noteMissPress(direction:Float = 1):Void
+	{
+		if (!boyfriend.stunned)
+		{
+			combo = 0;
+		}
+	}
+
 	function noteMiss(direction:Int = 1):Void
 	{
 		if (!boyfriend.stunned)
@@ -2241,7 +2250,7 @@ class PlayState extends MusicBeatState
 		var rightP = controls.RIGHT_P;
 		var downP = controls.DOWN_P;
 		var leftP = controls.LEFT_P;
-
+	
 		if (leftP)
 			noteMiss(0);
 		if (downP)
@@ -2251,7 +2260,7 @@ class PlayState extends MusicBeatState
 		if (rightP)
 			noteMiss(3);
 	}
-
+	
 	function noteCheck(keyP:Bool, note:Note):Void
 	{
 		if (keyP)
@@ -2296,7 +2305,7 @@ class PlayState extends MusicBeatState
 					spr.animation.play('confirm', true);
 				}
 			});
-
+			
 			note.wasGoodHit = true;
 			vocals.volume = 1;
 

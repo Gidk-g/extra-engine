@@ -4,6 +4,12 @@ import flixel.FlxG;
 import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
+import openfl.display.BitmapData;
+import flixel.graphics.FlxGraphic;
+#if MODS
+import sys.io.File;
+import sys.FileSystem;
+#end
 
 class Paths
 {
@@ -11,6 +17,14 @@ class Paths
 	inline public static var VIDEO_EXT = "mp4";
 
 	static var currentLevel:String;
+
+	static public var modDir:String = null;
+
+	public static var customImagesLoaded:Map<String, Bool> = new Map<String, Bool>();
+
+	public static var ignoredFolders:Array<String> = [
+		'custom_characters', 'images'
+	];
 
 	static public function setCurrentLevel(name:String)
 	{
@@ -122,5 +136,95 @@ class Paths
 	inline static public function getPackerAtlas(key:String, ?library:String)
 	{
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
+	}
+
+	inline static public function getModsSparrowAtlas(key:String, ?library:String)
+	{
+		var imageLoaded:FlxGraphic = addCustomGraphic(key);
+		var xmlExists:Bool = false;
+		if (FileSystem.exists(modsXml(key)))
+		{
+			xmlExists = true;
+		}
+
+		return FlxAtlasFrames.fromSparrow((imageLoaded != null ? imageLoaded : image(key, library)),
+			(xmlExists ? File.getContent(modsXml(key)) : file('images/$key.xml', library)));
+	}
+
+	inline static public function fileExists(key:String, type:AssetType, ?ignoreMods:Bool = false, ?library:String)
+	{
+		#if MODS
+		if (FileSystem.exists(mods(key)) || FileSystem.exists(mods(key)))
+		{
+			return true;
+		}
+		#else
+		if (OpenFlAssets.exists(Paths.getPath(key, type, library)))
+		{
+			return true;
+		}
+		#end
+		return false;
+	}
+
+	static public function addCustomGraphic(key:String):FlxGraphic
+	{
+		#if MODS
+		if (FileSystem.exists(modsImages(key)))
+		{
+			if (!customImagesLoaded.exists(key))
+			{
+				var newBitmap:BitmapData = BitmapData.fromFile(modsImages(key));
+				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
+				newGraphic.persist = true;
+				FlxG.bitmap.addGraphic(newGraphic);
+				customImagesLoaded.set(key, true);
+			}
+			return FlxG.bitmap.get(key);
+		}
+		#end
+		return null;
+	}
+
+	static public function modFolder(key:String)
+	{
+		#if MODS
+		var list:Array<String> = [];
+		var modsFolder:String = Paths.mods();
+		if (FileSystem.exists(modsFolder))
+		{
+			for (folder in FileSystem.readDirectory(modsFolder))
+			{
+				var path = haxe.io.Path.join([modsFolder, folder]);
+				if (sys.FileSystem.isDirectory(path) && !Paths.ignoredFolders.contains(folder) && !list.contains(folder))
+				{
+					list.push(folder);
+					for (i in 0...list.length)
+					{
+						modDir = list[i];
+					}
+				}
+			}
+		}
+
+		return 'mods/' + key;
+		#else
+		return key;
+		#end
+	}
+
+	inline static public function mods(key:String = '')
+	{
+		return 'mods/' + key;
+	}
+
+	inline static public function modsXml(key:String)
+	{
+		return modFolder('images/' + key + '.xml');
+	}
+
+	inline static public function modsImages(key:String)
+	{
+		return modFolder('images/' + key + '.png');
 	}
 }

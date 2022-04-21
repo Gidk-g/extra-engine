@@ -1,0 +1,62 @@
+{
+	"animations": [
+		{
+			"offsets": [
+				0,
+				0
+			],
+			"anim": "idle",
+			"loop": false,
+			"name": "Dad idle dance"
+		},
+		{
+			"offsets": [
+				0,
+				-30
+			],
+			"anim": "singDOWN",
+			"loop": false,
+			"name": "Dad Sing Note DOWN"
+		},
+		{
+			"offsets": [
+				-6,
+				50
+			],
+			"anim": "singUP",
+			"loop": false,
+			"name": "Dad Sing Note UP"
+		},
+		{
+			"offsets": [
+				0,
+				27
+			],
+			"anim": "singRIGHT",
+			"loop": false,
+			"name": "Dad Sing Note RIGHT"
+		},
+		{
+			"offsets": [
+				-10,
+				10
+			],
+			"anim": "singLEFT",
+			"loop": false,
+			"name": "Dad Sing Note LEFT"
+		}
+	],
+	"image": "DADDY_DEAREST",
+	"cameraPosition": [
+		0,
+		0
+	],
+	"healthbarColor": [
+		175,
+		102,
+		206
+	],
+	"flipX": false,
+	"flipY": false,
+	"scale": 1
+}

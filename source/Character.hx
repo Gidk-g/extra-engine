@@ -4,12 +4,62 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.animation.FlxBaseAnimation;
 import flixel.graphics.frames.FlxAtlasFrames;
+import animateatlas.AtlasFrameMaker;
 import flixel.util.FlxColor;
+import haxe.Json;
+#if sys
+import sys.io.File;
+import sys.FileSystem;
+import flixel.graphics.FlxGraphic;
+import openfl.display.BitmapData;
+#end
 
 using StringTools;
 
+typedef SwagCharacter =
+{
+	var animations:Array<AnimationCool>;
+	var image:String;
+	var healthbarColor:Array<Int>;
+	var cameraPosition:Array<Float>;
+	var scale:Float;
+	var flipX:Bool;
+	var flipY:Bool;
+}
+
+typedef AnimationCool =
+{
+	var anim:String;
+	var name:String;
+	var offsets:Array<Int>;
+	var loop:Bool;
+}
+
 class Character extends FlxSprite
 {
+	public var anim:String;
+	public var name:String;
+	public var swagOffsets:Bool;
+	public var loop:Bool;
+	public var animations:Array<AnimationCool>;
+	public var image:String;
+
+	public var healthbarColor:Array<Int>;
+
+	public var scalecool:Float;
+
+	public var imageDir:String = "BOYFRIEND";
+
+	public var imagePNG:String = '';
+
+	public var varflipX:Bool;
+
+	public var varflipY:Bool;
+
+	public var cameraPosition:Array<Float>;
+
+	public var stunned:Bool = false;
+
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
 
@@ -18,6 +68,7 @@ class Character extends FlxSprite
 
 	public var holdTimer:Float = 0;
 	public var barColor:FlxColor = FlxColor.WHITE;
+	public var animationsthing:Array<AnimationCool> = [];
 
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
 	{
@@ -128,24 +179,6 @@ class Character extends FlxSprite
 				updateHitbox();
 				antialiasing = false;
 
-			case 'dad':
-				// DAD ANIMATION LOADING CODE
-				tex = Paths.getSparrowAtlas('DADDY_DEAREST');
-				frames = tex;
-				animation.addByPrefix('idle', 'Dad idle dance', 24);
-				animation.addByPrefix('singUP', 'Dad Sing Note UP', 24);
-				animation.addByPrefix('singRIGHT', 'Dad Sing Note RIGHT', 24);
-				animation.addByPrefix('singDOWN', 'Dad Sing Note DOWN', 24);
-				animation.addByPrefix('singLEFT', 'Dad Sing Note LEFT', 24);
-
-				addOffset('idle');
-				addOffset("singUP", -6, 50);
-				addOffset("singRIGHT", 0, 27);
-				addOffset("singLEFT", -10, 10);
-				addOffset("singDOWN", 0, -30);
-
-				barColor = FlxColor.fromRGB(175, 102, 206);
-				playAnim('idle');
 			case 'spooky':
 				tex = Paths.getSparrowAtlas('spooky_kids_assets');
 				frames = tex;
@@ -515,6 +548,48 @@ class Character extends FlxSprite
 				addOffset("singDOWN-alt", -30, -27);
 				barColor = FlxColor.fromRGB(196, 94, 174);
 				playAnim('idle');
+
+			default:
+				#if MODS
+				var charKey:String = Paths.modFolder('custom_characters/' + curCharacter + '.json');
+				var rawJson = File.getContent(charKey);
+				var parsedJson:SwagCharacter = cast Json.parse(rawJson);
+				frames = Paths.getModsSparrowAtlas(parsedJson.image);
+				imagePNG = parsedJson.image;
+				imageDir = imagePNG;
+				animationsthing = parsedJson.animations;
+				varflipY = parsedJson.flipY;
+				varflipX = parsedJson.flipX;
+				flipY = varflipY;
+				flipX = varflipX;
+				if (parsedJson.scale != 1)
+				{
+					scalecool = parsedJson.scale;
+					setGraphicSize(Std.int(width * scalecool));
+					updateHitbox();
+				}
+				cameraPosition = parsedJson.cameraPosition;
+				healthbarColor = parsedJson.healthbarColor;
+				barColor = FlxColor.fromRGB(parsedJson.healthbarColor[0], parsedJson.healthbarColor[1], parsedJson.healthbarColor[2]);
+				if (Paths.fileExists(Paths.modFolder("images/characters/") + parsedJson.image + ".json", TEXT))
+				{
+					frames = AtlasFrameMaker.construct(Paths.modFolder("custom_characters/") + parsedJson.image);
+				}
+				else if (animationsthing != null && animationsthing.length > 0)
+				{
+					for (anim in animationsthing)
+					{
+						var animAnim:String = '' + anim.anim;
+						var animName:String = '' + anim.name;
+						var animLoop:Bool = !!anim.loop;
+						if (anim.offsets != null && anim.offsets.length > 1)
+						{
+							addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
+						}
+						animation.addByPrefix(animAnim, animName, 24, animLoop);
+					}
+				}
+				#end
 		}
 
 		dance();
