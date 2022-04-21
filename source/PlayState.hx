@@ -608,8 +608,6 @@ class PlayState extends MusicBeatState
 				gfVersion = 'gf-christmas';
 			case 'gf-pixel':
 				gfVersion = 'gf-pixel';
-			default:
-				gfVersion = 'gf';
 		}
 
 		gf = new Character(400, 130, gfVersion);
