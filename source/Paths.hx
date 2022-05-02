@@ -29,7 +29,7 @@ class Paths
 	public static var customSoundsLoaded:Map<String, Sound> = new Map();
 
 	public static var ignoredFolders:Array<String> = [
-		'custom_characters', 'images', 'data', 'songs', 'stages', 'music', 'sounds'
+		'custom_characters', 'images', 'data', 'songs', 'music', 'sounds'
 	];
 
 	static public function setCurrentLevel(name:String)
