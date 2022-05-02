@@ -6,6 +6,8 @@ import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
 import openfl.display.BitmapData;
 import flixel.graphics.FlxGraphic;
+import lime.utils.Assets;
+import flash.media.Sound;
 #if MODS
 import sys.io.File;
 import sys.FileSystem;
@@ -18,12 +20,16 @@ class Paths
 
 	static var currentLevel:String;
 
+	public static var localTrackedAssets:Array<String> = [];
+	public static var currentTrackedSounds:Map<String, Sound> = [];
+
 	static public var modDir:String = null;
 
 	public static var customImagesLoaded:Map<String, Bool> = new Map<String, Bool>();
+	public static var customSoundsLoaded:Map<String, Sound> = new Map();
 
 	public static var ignoredFolders:Array<String> = [
-		'custom_characters', 'images'
+		'custom_characters', 'images', 'data', 'songs', 'stages', 'music', 'sounds'
 	];
 
 	static public function setCurrentLevel(name:String)
@@ -83,6 +89,11 @@ class Paths
 		return getPath('data/$key.txt', TEXT, library);
 	}
 
+	inline static public function txtImage(key:String, ?library:String)
+	{
+		return getPath('images/$key.txt', TEXT, library);
+	}
+
 	inline static public function xml(key:String, ?library:String)
 	{
 		return getPath('data/$key.xml', TEXT, library);
@@ -103,24 +114,61 @@ class Paths
 		return sound(key + FlxG.random.int(min, max), library);
 	}
 
-	inline static public function music(key:String, ?library:String)
+	inline static public function music(key:String, ?library:String):Dynamic
 	{
-		return getPath('music/$key.$SOUND_EXT', MUSIC, library);
+		var file:Sound = addCustomSound('music', key);
+		return file;
 	}
 
-	inline static public function voices(song:String)
+	inline static public function voices(song:String):Any
 	{
+		#if MODS
+		var file:Sound = returnSongFile(modsSongs(song.toLowerCase() + '/Voices'));
+		if (file != null)
+		{
+			return file;
+		}
+		#end
+	
 		return 'songs:assets/songs/${song.toLowerCase()}/Voices.$SOUND_EXT';
 	}
-
-	inline static public function inst(song:String)
+	
+	inline static public function inst(song:String):Any
 	{
+		#if MODS
+		var file:Sound = returnSongFile(modsSongs(song.toLowerCase() + '/Inst'));
+		if (file != null)
+		{
+			return file;
+		}
+		#end
+	
 		return 'songs:assets/songs/${song.toLowerCase()}/Inst.$SOUND_EXT';
 	}
-
-	inline static public function image(key:String, ?library:String)
+	
+	inline static private function returnSongFile(file:String):Sound
 	{
-		return getPath('images/$key.png', IMAGE, library);
+		#if MODS
+		if (FileSystem.exists(file))
+		{
+			if (!customSoundsLoaded.exists(file))
+			{
+				customSoundsLoaded.set(file, Sound.fromFile(file));
+			}
+			return customSoundsLoaded.get(file);
+		}
+		#end
+		return null;
+	}
+
+	inline static public function image(key:String, ?library:String):Dynamic
+	{
+		#if MODS
+		var imageToReturn:FlxGraphic = addCustomGraphic(key);
+		if (imageToReturn != null)
+			return imageToReturn;
+		#end
+		return getPath('images/$key.png', IMAGE);
 	}
 
 	inline static public function font(key:String)
@@ -186,6 +234,32 @@ class Paths
 		return null;
 	}
 
+	public static function addCustomSound(path:String, key:String, ?library:String)
+	{
+		#if MODS
+		var file:String = modSound(path, key);
+		if (FileSystem.exists(file))
+		{
+			if (!currentTrackedSounds.exists(file))
+			{
+				currentTrackedSounds.set(file, Sound.fromFile(file));
+			}
+			localTrackedAssets.push(key);
+			return currentTrackedSounds.get(file);
+		}
+		#end
+		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
+		gottenPath = gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length);
+		if (!currentTrackedSounds.exists(gottenPath))
+			#if MODS
+			currentTrackedSounds.set(gottenPath, Sound.fromFile('./' + gottenPath));
+			#else
+			currentTrackedSounds.set(gottenPath, OpenFlAssets.getSound(getPath('$path/$key.$SOUND_EXT', SOUND, library)));
+			#end
+		localTrackedAssets.push(gottenPath);
+		return currentTrackedSounds.get(gottenPath);
+	}
+
 	static public function modFolder(key:String)
 	{
 		#if MODS
@@ -226,5 +300,25 @@ class Paths
 	inline static public function modsImages(key:String)
 	{
 		return modFolder('images/' + key + '.png');
+	}
+
+	inline static public function modsSongs(key:String)
+	{
+		return modFolder('songs/' + key + '.' + SOUND_EXT);
+	}
+	
+	inline static public function modSong(key:String)
+	{
+		return modFolder(key + '.json');
+	}
+	
+	inline static public function modsJson(key:String)
+	{	
+		return modFolder('data/' + key + '.json');
+	}
+
+	inline static public function modSound(path:String, key:String)
+	{
+		return modFolder(path + '/' + key + '.' + SOUND_EXT);
 	}
 }

@@ -118,17 +118,19 @@ class ChartingState extends MusicBeatState
 		else
 		{
 			_song = {
-				song: 'Test',
+				song: 'test',
 				notes: [],
 				bpm: 150,
 				needsVoices: true,
 				stage: 'stage',
 				player1: 'bf',
-				player2: 'dad',
+				player2: 'bf-pixel-test',
 				gfVersion: 'gf',
-				speed: 1,
-				validScore: false
+				speed: 1.6,
+				validScore: true
 			};
+			addSection();
+			PlayState.SONG = _song;
 		}
 
 		FlxG.mouse.visible = true;
@@ -234,6 +236,18 @@ class ChartingState extends MusicBeatState
 			}
 		};
 
+		var clear_notes:FlxButton = new FlxButton(320, 350, 'Clear notes', 
+		function()
+		{
+			for (sec in 0..._song.notes.length) 
+			{
+			    _song.notes[sec].sectionNotes = [];
+			}
+			updateGrid();
+		});
+		clear_notes.color = FlxColor.RED;
+		clear_notes.label.color = FlxColor.WHITE;
+
 		var saveButton:FlxButton = new FlxButton(110, 8, "Save", function()
 		{
 			saveLevel();
@@ -294,6 +308,7 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(UI_songTitle);
 
 		tab_group_song.add(check_voices);
+		tab_group_song.add(clear_notes);
 		tab_group_song.add(check_mute_inst);
 		tab_group_song.add(check_mute_vocals);
 		tab_group_song.add(saveButton);
@@ -437,7 +452,6 @@ class ChartingState extends MusicBeatState
 			loopCheck.checked = curNoteSelected.doesLoop;
 			tooltips.add(loopCheck, {title: 'Section looping', body: "Whether or not it's a simon says style section", style: tooltipType});
 			bullshitUI.add(loopCheck);
-
 		 */
 	}
 
@@ -1038,23 +1052,18 @@ class ChartingState extends MusicBeatState
 		function calculateSectionLengths(?sec:SwagSection):Int
 		{
 			var daLength:Int = 0;
-
 			for (i in _song.notes)
 			{
 				var swagLength = i.lengthInSteps;
-
 				if (i.typeOfSection == Section.COPYCAT)
 					swagLength * 2;
-
 				daLength += swagLength;
-
 				if (sec != null && sec == i)
 				{
 					trace('swag loop??');
 					break;
 				}
 			}
-
 			return daLength;
 	}*/
 	private var daSpacing:Float = 0.3;

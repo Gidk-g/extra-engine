@@ -42,6 +42,12 @@
             "weekNum": 6,
             "isPixelWeek": true,
             "locked": false
+        },
+        {
+            "songs": ["test"],
+            "songCharacters": ["bf-pixel"],
+            "weekNum": 7,
+            "locked": true
         }
     ]
 }

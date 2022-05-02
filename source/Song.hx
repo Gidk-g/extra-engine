@@ -4,6 +4,10 @@ import Section.SwagSection;
 import haxe.Json;
 import haxe.format.JsonParser;
 import lime.utils.Assets;
+#if sys
+import sys.io.File;
+import sys.FileSystem;
+#end
 
 using StringTools;
 
@@ -44,12 +48,28 @@ class Song
 
 	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
 	{
-		var rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
+		var rawJson = null;
+
+		#if MODS
+		var moddyFile:String = Paths.modsJson(folder.toLowerCase() + '/' + jsonInput.toLowerCase());
+		if (FileSystem.exists(moddyFile))
+		{
+			rawJson = File.getContent(moddyFile).trim();
+		}
+		#end
+
+		if (rawJson == null)
+		{
+			#if sys
+			rawJson = File.getContent(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
+			#else
+			rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
+			#end
+		}
 
 		while (!rawJson.endsWith("}"))
 		{
 			rawJson = rawJson.substr(0, rawJson.length - 1);
-			// LOL GOING THROUGH THE BULLSHIT TO CLEAN IDK WHATS STRANGE
 		}
 
 		// FIX THE CASTING ON WINDOWS/NATIVE

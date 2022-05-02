@@ -7,6 +7,7 @@
 			],
 			"anim": "idle",
 			"loop": false,
+			"fps": 24,
 			"name": "Dad idle dance"
 		},
 		{
@@ -16,6 +17,7 @@
 			],
 			"anim": "singDOWN",
 			"loop": false,
+			"fps": 24,
 			"name": "Dad Sing Note DOWN"
 		},
 		{
@@ -25,6 +27,7 @@
 			],
 			"anim": "singUP",
 			"loop": false,
+			"fps": 24,
 			"name": "Dad Sing Note UP"
 		},
 		{
@@ -34,6 +37,7 @@
 			],
 			"anim": "singRIGHT",
 			"loop": false,
+			"fps": 24,
 			"name": "Dad Sing Note RIGHT"
 		},
 		{
@@ -43,10 +47,16 @@
 			],
 			"anim": "singLEFT",
 			"loop": false,
+			"fps": 24,
 			"name": "Dad Sing Note LEFT"
 		}
 	],
-	"image": "DADDY_DEAREST",
+	"no_antialiasing": false,
+	"image": "characters/DADDY_DEAREST",
+	"position": [
+		0,
+		0
+	],
 	"cameraPosition": [
 		0,
 		0
