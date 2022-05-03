@@ -17,14 +17,24 @@ class PauseSubState extends MusicBeatSubstate
 {
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
 
-	var menuItems:Array<String> = ['Resume', 'Restart Song', 'Exit to menu'];
+	var menuItems:Array<String> = [];
+	var menuItemswhyhaxe:Array<String> = ['Resume','Restart Song','Change Difficulty','Exit to menu'];
 	var curSelected:Int = 0;
+	var difficultyChoices = [];
 
 	var pauseMusic:FlxSound;
 
 	public function new(x:Float, y:Float)
 	{
 		super();
+		menuItems = menuItemswhyhaxe;
+
+		for (i in 0...CoolUtil.difficultyArray.length)
+		{
+			var diff:String = '' + CoolUtil.difficultyArray[i][0];
+			difficultyChoices.push(diff);
+		}
+		difficultyChoices.push('BACK');
 
 		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
 		pauseMusic.volume = 0;
@@ -101,14 +111,34 @@ class PauseSubState extends MusicBeatSubstate
 		{
 			var daSelected:String = menuItems[curSelected];
 
+			for (i in 0...difficultyChoices.length - 1)
+			{
+				if (difficultyChoices[i] == daSelected)
+				{
+					var name:String = PlayState.SONG.song.toLowerCase();
+					var poop = Highscore.formatSong(name, curSelected);
+					PlayState.SONG = Song.loadFromJson(poop, name);
+					PlayState.storyDifficulty = curSelected;
+					MusicBeatState.resetState();
+					FlxG.sound.music.volume = 0;
+					return;
+				}
+			}
+
 			switch (daSelected)
 			{
 				case "Resume":
 					close();
+				case "Change Difficulty":
+					menuItems = difficultyChoices;
+					regenerateMenu();
 				case "Restart Song":
 					FlxG.resetState();
 				case "Exit to menu":
 					FlxG.switchState(new MainMenuState());
+				case "BACK":
+					menuItems = menuItemswhyhaxe;
+					regenerateMenu();
 			}
 		}
 
@@ -151,5 +181,22 @@ class PauseSubState extends MusicBeatSubstate
 				// item.setGraphicSize(Std.int(item.width));
 			}
 		}
+	}
+
+	function regenerateMenu():Void
+	{
+		for (i in 0...grpMenuShit.members.length)
+		{
+			this.grpMenuShit.remove(this.grpMenuShit.members[0], true);
+		}
+		for (i in 0...menuItems.length)
+		{
+			var item = new Alphabet(0, 70 * i + 30, menuItems[i], true, false);
+			item.isMenuItem = true;
+			item.targetY = i;
+			grpMenuShit.add(item);
+		}
+		curSelected = 0;
+		changeSelection();
 	}
 }

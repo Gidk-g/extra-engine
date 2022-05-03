@@ -64,8 +64,6 @@ class Character extends FlxSprite
 	public var cameraPosition:Array<Float>;
 	public var position:Array<Float>;
 
-	public var stunned:Bool = false;
-
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
 
@@ -680,9 +678,20 @@ class Character extends FlxSprite
 		}
 
 		super.update(elapsed);
+
+		if (heyTimer <= 0) {
+			suspendOtherAnims = false;
+		} else {
+			heyTimer -= elapsed;
+			suspendOtherAnims = true;
+		}
 	}
 
 	private var danced:Bool = false;
+
+	public var heyTimer:Float = 0;
+
+	public var suspendOtherAnims:Bool = false;
 
 	/**
 	 * FOR GF DANCING SHIT

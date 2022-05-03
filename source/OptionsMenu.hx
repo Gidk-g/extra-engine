@@ -1,123 +1,235 @@
 package;
 
-#if desktop
-import Discord.DiscordClient;
-#end
+import lime.app.Application;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import openfl.Lib;
+import Options;
+import Controls.Control;
 import flash.text.TextField;
 import flixel.FlxG;
+import openfl.display.FPS;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.input.keyboard.FlxKey;
+import flixel.effects.FlxFlicker;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import lime.utils.Assets;
-import flixel.FlxSubState;
-import flash.text.TextField;
-import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.util.FlxSave;
-import haxe.Json;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.util.FlxTimer;
-import flixel.input.keyboard.FlxKey;
-import flixel.graphics.FlxGraphic;
-import Controls;
-
-using StringTools;
+import lime.system.DisplayMode;
 
 class OptionsMenu extends MusicBeatState
 {
-	var options:Array<String> = ['Controls'];
-	private var grpOptions:FlxTypedGroup<Alphabet>;
-	private static var curSelected:Int = 0;
 	public static var instance:OptionsMenu;
+
+	var selector:FlxText;
+
+	static var curSelected:Int = 0;
+
+	var opt:Option;
+
+	var options:Array<OptionCategory> = [
+		new OptionCategory("Preferences",
+		[
+			new DownscrollOption(),
+			new BotplayOption(),
+			new TimebarOption(),
+			new FPSOption(),
+			new MEMOption(),
+			new VerOption()
+		]),
+		new OptionCategory("Controls"),
+		new OptionCategory("Exit")
+	];
+
+	private var grpCheckboxes:FlxTypedGroup<CheckboxThingie>;
+
+	var fpsthing:FlxText;
+
 	public var acceptInput:Bool = true;
-	public static var menuBG:FlxSprite;
 
-	function openSelectedSubstate(label:String) {
-		switch(label) {
-			case 'Controls':
-				openSubState(new KeyBindMenu());
-		}
-	}
+	public var grpControls:FlxTypedGroup<Alphabet>;
 
-	override function create() {
+	var currentSelectedCat:OptionCategory;
+
+	var confirming:Bool = false;
+
+	override function create()
+	{
 		instance = this;
-		#if desktop
-		DiscordClient.changePresence("Options Menu", null);
-		#end
+		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image("menuDesat"));
 
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.color = 0xFFea71fd;
-		bg.updateHitbox();
+		menuBG.color = 0xFFea71fd;
+		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
+		menuBG.updateHitbox();
+		menuBG.screenCenter();
+		menuBG.antialiasing = true;
+		add(menuBG);
 
-		bg.screenCenter();
-		bg.antialiasing = false;
-		add(bg);
+		grpControls = new FlxTypedGroup<Alphabet>();
+		add(grpControls);
 
-		grpOptions = new FlxTypedGroup<Alphabet>();
-		add(grpOptions);
+		grpCheckboxes = new FlxTypedGroup<CheckboxThingie>();
+		add(grpCheckboxes);
 
-		for (i in 0...options.length)
-		{
-			var optionText:Alphabet = new Alphabet(0, 0, options[i], true, false);
-			optionText.screenCenter();
-			optionText.y += (100 * (i - (options.length / 2))) + 50;
-			grpOptions.add(optionText);
-		}
+		generateMainMenu();
 
 		changeSelection();
 
 		super.create();
 	}
 
-	override function closeSubState() {
-		super.closeSubState();
+	function generateMainMenu()
+	{
+		for (i in 0...options.length)
+		{
+			var controlLabel:Alphabet = new Alphabet(0, FlxG.height / 5 + 70 * i + 25 * i, options[i].getName(), true);
+			controlLabel.screenCenter(X);
+			grpControls.add(controlLabel);
+		}
 	}
 
-	override function update(elapsed:Float) {
+	public var isCat:Bool = false;
+
+	override function update(elapsed:Float)
+	{
 		super.update(elapsed);
 
-		if (controls.UP_P) {
-			changeSelection(-1);
-		}
-		if (controls.DOWN_P) {
-			changeSelection(1);
-		}
+		if (acceptInput && !confirming)
+		{
+			if (controls.BACK)
+			{
+				if (isCat)
+				{
+					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+					isCat = false;
+					grpControls.clear();
+					grpCheckboxes.clear();
+					generateMainMenu();
+					curSelected = 0;
+					changeSelection();
+				}
+				else
+					quit();
+			}
+			if (controls.UP_P)
+			{
+				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+				changeSelection(-1);
+			}
+			if (controls.DOWN_P)
+			{
+				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+				changeSelection(1);
+			}
 
-		if (controls.RESET)
-			FlxG.save.data.offset = 0;
+			if (isCat)
+			{
+				if (currentSelectedCat.getOptions()[curSelected].getAccept())
+				{
+					if (FlxG.keys.pressed.SHIFT)
+					{
+						if (FlxG.keys.pressed.RIGHT)
+							currentSelectedCat.getOptions()[curSelected].right();
+						if (FlxG.keys.pressed.LEFT)
+							currentSelectedCat.getOptions()[curSelected].left();
+					}
+				}
+				else if (FlxG.keys.pressed.SHIFT)
+				{
+					if (FlxG.keys.justPressed.RIGHT)
+						currentSelectedCat.getOptions()[curSelected].right();
+					if (FlxG.keys.justPressed.LEFT)
+						currentSelectedCat.getOptions()[curSelected].left();
+				}
+			}
 
-		if (controls.BACK) {
-			FlxG.sound.play(Paths.sound('cancelMenu'));
-			MusicBeatState.switchState(new MainMenuState());
-		}
-
-		if (controls.ACCEPT) {
-			openSelectedSubstate(options[curSelected]);
+			if (controls.ACCEPT)
+			{
+				FlxG.sound.play(Paths.sound('confirmMenu'));
+				confirming = true;
+				FlxFlicker.flicker(grpControls.members[curSelected], 1, 0.06, true, false, function(flick:FlxFlicker)
+				{
+					if (isCat && currentSelectedCat.getOptions()[curSelected].press())
+					{
+						grpCheckboxes.members[curSelected].daValue = currentSelectedCat.getOptions()[curSelected].daValue;
+						grpControls.members[curSelected].changeText(currentSelectedCat.getOptions()[curSelected].getDisplay());
+					}
+					else if (options[curSelected].getName() == "Controls")
+						openSubState(new KeyBindMenu());
+					else if (options[curSelected].getName() == "Exit")
+						quit();
+					else
+					{
+						currentSelectedCat = options[curSelected];
+						isCat = true;
+						grpControls.clear();
+						grpCheckboxes.clear();
+						for (i in 0...currentSelectedCat.getOptions().length)
+						{
+							var controlLabel:Alphabet = new Alphabet(0, (70 * i) + 30, currentSelectedCat.getOptions()[i].getDisplay(), true, false);
+							controlLabel.isMenuItem = true;
+							controlLabel.targetY = i;
+							grpControls.add(controlLabel);
+							controlLabel.forceX = 150;
+							if (currentSelectedCat.getOptions()[i].isBool)
+							{
+								var checkbox:CheckboxThingie = new CheckboxThingie(controlLabel.x - 105, controlLabel.y,
+									currentSelectedCat.getOptions()[i].daValue);
+								checkbox.sprTracker = controlLabel;
+								checkbox.ID = i;
+								grpCheckboxes.add(checkbox);
+							}
+						}
+						curSelected = 0;
+						changeSelection();
+					}
+					confirming = false;
+				});
+			}
 		}
 	}
-	
-	function changeSelection(change:Int = 0) {
+
+	var isSettingControl:Bool = false;
+
+	function quit()
+	{
+		FlxG.save.flush();
+		MusicBeatState.switchState(new MainMenuState());
+	}
+
+	function changeSelection(change:Int = 0)
+	{
+		#if !switch
+		// NGio.logEvent("Fresh");
+		#end
+
 		curSelected += change;
+
 		if (curSelected < 0)
-			curSelected = options.length - 1;
-		if (curSelected >= options.length)
+			curSelected = grpControls.length - 1;
+		if (curSelected >= grpControls.length)
 			curSelected = 0;
+
+		// selector.y = (70 * curSelected) + 30;
 
 		var bullShit:Int = 0;
 
-		for (item in grpOptions.members) {
+		for (item in grpControls.members)
+		{
 			item.targetY = bullShit - curSelected;
 			bullShit++;
 
 			item.alpha = 0.6;
-			if (item.targetY == 0) {
+			// item.setGraphicSize(Std.int(item.width * 0.8));
+
+			if (item.targetY == 0)
+			{
 				item.alpha = 1;
+				// item.setGraphicSize(Std.int(item.width));
 			}
 		}
-		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
 }

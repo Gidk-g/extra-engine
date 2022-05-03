@@ -25,7 +25,7 @@ using StringTools;
 
 class EditorMenu extends MusicBeatState
 {
-	var optionShit:Array<String> = ['Chart Editor','Animation Editor','Menu Character Editor'];
+	var optionShit:Array<String> = ['Chart Editor','Animation Editor'];
 
 	var confirming:Bool = false;
 
@@ -120,12 +120,10 @@ class EditorMenu extends MusicBeatState
 			{
 				switch (optionShit[curSelected])
 				{
-					case 'Menu Character Editor':
-						LoadingState.loadAndSwitchState(new MenuCharacterEditor());
-					case 'Animation Editor':
-						LoadingState.loadAndSwitchState(new AnimationEditor());
 					case 'Chart Editor':
 						LoadingState.loadAndSwitchState(new ChartingState(), false);
+					case 'Animation Editor':
+						LoadingState.loadAndSwitchState(new AnimationEditor());
 				}
 				FlxG.sound.music.volume = 0;
 				confirming = false;

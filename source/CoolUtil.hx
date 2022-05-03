@@ -6,11 +6,14 @@ using StringTools;
 
 class CoolUtil
 {
-	public static var difficultyArray:Array<String> = ['EASY', "NORMAL", "HARD"];
+	public static var difficultyArray:Array<Dynamic> = [['Easy'], ['Normal'], ['Hard']];
 
-	public static function difficultyString():String
+	public static function difficultyString(uppercase:Bool = true):String
 	{
-		return difficultyArray[PlayState.storyDifficulty];
+		if (uppercase)
+			return difficultyArray[PlayState.storyDifficulty][0].toUpperCase();
+		else
+			return difficultyArray[PlayState.storyDifficulty][0];
 	}
 
 	public static function boundTo(value:Float, min:Float, max:Float):Float {

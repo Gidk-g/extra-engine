@@ -21,10 +21,17 @@ class Note extends FlxSprite
 	public var wasGoodHit:Bool = false;
 	public var prevNote:Note;
 
+	public var missed:Bool = false;
+
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
+	public var sustainParent:Note;
+	public var sustainChildren:Array<Note> = [];
+	public var isLockedSustain:Bool;
 
 	public var noteScore:Float = 1;
+
+	public var inEditor:Bool = false;
 
 	public static var swagWidth:Float = 160 * 0.7;
 	public static var PURP_NOTE:Int = 0;
@@ -32,7 +39,9 @@ class Note extends FlxSprite
 	public static var BLUE_NOTE:Int = 1;
 	public static var RED_NOTE:Int = 3;
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false)
+	public var chartNoteChildren:Array<FlxSprite>;
+
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?isSustainNote:Bool = false, ?inEditor:Bool = false)
 	{
 		super();
 
@@ -40,17 +49,27 @@ class Note extends FlxSprite
 			prevNote = this;
 
 		this.prevNote = prevNote;
-		isSustainNote = sustainNote;
+		this.isSustainNote = isSustainNote;
+		this.inEditor = inEditor;
 
 		x += 50;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
 		y -= 2000;
 		this.strumTime = strumTime;
-
+		
 		this.noteData = noteData;
-
+		
 		var daStage:String = PlayState.curStage;
 
+		if (!inEditor && noteData != -1) {
+			if (isSustainNote && !prevNote.isSustainNote) {
+				sustainParent = prevNote;
+				prevNote.sustainChildren.push(this);
+			} else if (isSustainNote && prevNote.isSustainNote) {
+				sustainParent = prevNote.sustainParent;
+				sustainParent.sustainChildren.push(this);
+			}
+		}
 		switch (daStage)
 		{
 			case 'school' | 'schoolEvil':
@@ -80,7 +99,7 @@ class Note extends FlxSprite
 				updateHitbox();
 
 			default:
-				frames = Paths.getSparrowAtlas('NOTE_assets');
+				frames = Paths.getSparrowAtlas('NOTE_assets', 'shared');
 
 				animation.addByPrefix('greenScroll', 'green0');
 				animation.addByPrefix('redScroll', 'red0');
@@ -100,7 +119,8 @@ class Note extends FlxSprite
 				setGraphicSize(Std.int(width * 0.7));
 				updateHitbox();
 				antialiasing = true;
-		}
+		
+	}
 
 		switch (noteData)
 		{
@@ -120,7 +140,7 @@ class Note extends FlxSprite
 
 		// trace(prevNote);
 
-		if (isSustainNote && prevNote != null)
+		if (isSustainNote && prevNote != null && !inEditor)
 		{
 			noteScore * 0.2;
 			alpha = 0.6;
@@ -146,7 +166,7 @@ class Note extends FlxSprite
 			if (PlayState.curStage.startsWith('school'))
 				x += 30;
 
-			if (prevNote.isSustainNote)
+			if (prevNote.isSustainNote && !inEditor)
 			{
 				switch (prevNote.noteData)
 				{
@@ -183,7 +203,7 @@ class Note extends FlxSprite
 			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit)
 				tooLate = true;
 		}
-		else
+		else if (!mustPress)
 		{
 			canBeHit = false;
 
