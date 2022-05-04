@@ -85,6 +85,8 @@ class PlayState extends MusicBeatState
 	public var playerStrums:FlxTypedGroup<StrumArrow>;
 	public var dadStrums:FlxTypedGroup<StrumArrow>;
 
+	public var noteSplashGroup:FlxTypedGroup<NoteSplash>;
+
 	private var camZooming:Bool = false;
 	private var curSong:String = "";
 
@@ -732,6 +734,8 @@ class PlayState extends MusicBeatState
 
 		strumLineNotes = new FlxTypedGroup<StrumArrow>();
 		add(strumLineNotes);
+		noteSplashGroup = new FlxTypedGroup<NoteSplash>();
+		add(noteSplashGroup);
 
 		playerStrums = new FlxTypedGroup<StrumArrow>();
 
@@ -835,6 +839,9 @@ class PlayState extends MusicBeatState
 		healthBarBG.cameras = [camHUD];
         if (FlxG.save.data.botplay) {
 			botPlayState.cameras = [camHUD];
+		}
+		if (FlxG.save.data.noteSplashes) {
+			noteSplashGroup.cameras = [camHUD];
 		}
 		if (FlxG.save.data.showTimeBar) {
 			timeBar.cameras = [camHUD];
@@ -1960,7 +1967,7 @@ class PlayState extends MusicBeatState
 
 	var endingSong:Bool = false;
 
-	private function popUpScore(strumtime:Float):Void
+	private function popUpScore(strumtime:Float, note:Note):Void
 	{
 		var noteDiff:Float = Math.abs(strumtime - Conductor.songPosition);
 		// boyfriend.playAnim('hey');
@@ -1992,6 +1999,11 @@ class PlayState extends MusicBeatState
 		{
 			daRating = 'good';
 			score = 200;
+		}
+
+
+		if (daRating == 'sick' && FlxG.save.data.noteSplashes) {
+			spawnNoteSplash(note.noteData);
 		}
 
 		songScore += score;
@@ -2381,7 +2393,7 @@ class PlayState extends MusicBeatState
 		{
 			if (!note.isSustainNote)
 			{
-				popUpScore(note.strumTime);
+				popUpScore(note.strumTime, note);
 				combo += 1;
 			}
 
@@ -2401,7 +2413,6 @@ class PlayState extends MusicBeatState
 				case 3:
 					boyfriend.playAnim('singRIGHT', true);
 			}
-
 			playerStrums.forEach(function(spr:StrumArrow)
 			{
 				if (Math.abs(note.noteData) == spr.ID)
@@ -2410,12 +2421,13 @@ class PlayState extends MusicBeatState
 						var time = 0.15;
 						if (note.isSustainNote && !note.animation.curAnim.name.endsWith('end'))
 							time += 0.15;
-						spr.holdTimer = time;
+						spr.holdTimer = time;	
 					}
 					spr.animation.play('confirm', true);
 				}
 			});
 		
+
 			note.wasGoodHit = true;
 			vocals.volume = 1;
 
@@ -2424,7 +2436,7 @@ class PlayState extends MusicBeatState
 				note.kill();
 				notes.remove(note, true);
 				note.destroy();
-		    }
+			}
 		}	
 	}
 
@@ -2490,6 +2502,16 @@ class PlayState extends MusicBeatState
 			if (phillyTrain.x < -4000 && trainFinishing)
 				trainReset();
 		}
+	}
+
+	public inline function spawnNoteSplash(noteData:Int) {
+		var staticNote:FlxSprite = playerStrums.members[noteData];
+		createNoteSplash(staticNote.x, staticNote.y, noteData);
+	}
+
+	public inline function createNoteSplash(x:Float, y:Float, noteData:Int) {
+		var splash:NoteSplash = new NoteSplash(x, y, noteData);
+		noteSplashGroup.add(splash);
 	}
 
 	function trainReset():Void

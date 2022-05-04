@@ -31,6 +31,9 @@ class Prefs {
 		if (FlxG.save.data.showTimeBar == null)
 			FlxG.save.data.showTimeBar = true;
 
+		if (FlxG.save.data.noteSplashes == null)
+			FlxG.save.data.showTimeBar = true;
+
 		if (FlxG.save.data.downscroll == null)
 			FlxG.save.data.downscroll = false;
 

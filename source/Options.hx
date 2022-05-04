@@ -225,3 +225,25 @@ class TimebarOption extends Option
 		return "TimeBar";
 	}
 }
+
+class NoteSplashOption extends Option
+{
+	public function new()
+	{
+		super();
+		daValue = FlxG.save.data.noteSplashes;
+	}
+
+	public override function press():Bool
+	{
+		FlxG.save.data.noteSplashes = !FlxG.save.data.noteSplashes;
+		daValue = FlxG.save.data.noteSplashes;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "NoteSplash";
+	}
+}
