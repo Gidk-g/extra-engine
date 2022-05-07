@@ -247,3 +247,25 @@ class NoteSplashOption extends Option
 		return "NoteSplash";
 	}
 }
+
+class RatingOption extends Option
+{
+	public function new()
+	{
+		super();
+		daValue = FlxG.save.data.ratingCntr;
+	}
+
+	public override function press():Bool
+	{
+		FlxG.save.data.ratingCntr = !FlxG.save.data.ratingCntr;
+		daValue = FlxG.save.data.ratingCntr;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Rating Counter";
+	}
+}

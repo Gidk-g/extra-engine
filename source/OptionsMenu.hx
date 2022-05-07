@@ -37,6 +37,7 @@ class OptionsMenu extends MusicBeatState
 			new BotplayOption(),
 			new NoteSplashOption(),
 			new TimebarOption(),
+			new RatingOption(),
 			new FPSOption(),
 			new MEMOption(),
 			new VerOption()

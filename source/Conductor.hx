@@ -32,6 +32,21 @@ class Conductor
 	{
 	}
 
+	public static function judgeNote(note:Note, diff:Float = 0)
+	{
+		var timingWindows:Array<Int> = [45, 90, 135];
+		var windowNames:Array<String> = ['sick', 'good', 'bad'];
+
+		for (i in 0...timingWindows.length)
+		{
+			if (diff <= timingWindows[Math.round(Math.min(i, timingWindows.length - 1))])
+			{
+				return windowNames[i];
+			}
+		}
+		return 'shit';
+	}
+
 	public static function mapBPMChanges(song:SwagSong)
 	{
 		bpmChangeMap = [];

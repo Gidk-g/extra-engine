@@ -16,3 +16,5 @@ senpai
 senpai-angry
 spirit
 bf-pixel-test
+bf-holding-gf
+tankman

@@ -28,6 +28,9 @@ class Prefs {
 		if (FlxG.save.data.v == null)
 			FlxG.save.data.v = true;
 
+		if (FlxG.save.data.ratingCntr == null)
+			FlxG.save.data.ratingCntr = true;
+
 		if (FlxG.save.data.showTimeBar == null)
 			FlxG.save.data.showTimeBar = true;
 

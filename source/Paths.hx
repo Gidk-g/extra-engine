@@ -29,7 +29,7 @@ class Paths
 	public static var customSoundsLoaded:Map<String, Sound> = new Map();
 
 	public static var ignoredFolders:Array<String> = [
-		'custom_characters', 'images', 'data', 'songs', 'music', 'sounds'
+		'custom_characters', 'images', 'data', 'songs', 'music', 'sounds', 'videos'
 	];
 
 	static public function setCurrentLevel(name:String)
@@ -81,6 +81,12 @@ class Paths
 
 	static public function video(key:String)
 	{
+		#if MODS
+		var file:String = modsVideo(key);
+		if(FileSystem.exists(file)) {
+			return file;
+		}
+		#end
 		return 'assets/videos/$key.$VIDEO_EXT';
 	}
 
@@ -305,6 +311,10 @@ class Paths
 	inline static public function modsSongs(key:String)
 	{
 		return modFolder('songs/' + key + '.' + SOUND_EXT);
+	}
+
+	inline static public function modsVideo(key:String) {
+		return modFolder('videos/' + key + '.' + VIDEO_EXT);
 	}
 	
 	inline static public function modSong(key:String)
