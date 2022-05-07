@@ -367,7 +367,7 @@ class Character extends FlxSprite
 				addOffset("singLEFT", 100, -14);
 				addOffset("singDOWN", 64, -95);
 				addOffset("oldSingDOWN", 64, -95);
-			    addOffset("ughAnim", 11, -4);
+			    addOffset("ughAnim");
 				addOffset("prettyGoodAnim", 2, 16);
 
 				barColor = FlxColor.fromRGB(225, 225, 225);
