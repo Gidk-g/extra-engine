@@ -620,10 +620,9 @@ class PlayState extends MusicBeatState
 									ruins.setGraphicSize(Std.int(ruins.width * 1.1));
 									ruins.updateHitbox();
 									ruins.antialiasing = true;
-	
+
 									add(ruins);
-					
-	
+
 									var smokeLeft:FlxSprite = new FlxSprite(-200,-100);
 									smokeLeft.frames = Paths.getSparrowAtlas('warzone/smokeLeft');
 									smokeLeft.animation.addByPrefix('idle', 'SmokeBlurLeft ', 24, true);
@@ -642,7 +641,7 @@ class PlayState extends MusicBeatState
 									
 									add(smokeRight);
 	
-									tower = new FlxSprite(100, 120);
+									tower = new FlxSprite(-50,120);
 									tower.frames = Paths.getSparrowAtlas('warzone/tankWatchtower');
 									tower.animation.addByPrefix('idle', 'watchtower gradient color', 24, false);
 									tower.antialiasing = true;
@@ -774,7 +773,7 @@ class PlayState extends MusicBeatState
 										
 										add(smokeRight);
 
-										tower = new FlxSprite(100, 120);
+										tower = new FlxSprite(-50,120);
 										tower.frames = Paths.getSparrowAtlas('warzone/tankWatchtower');
 										tower.animation.addByPrefix('idle', 'watchtower gradient color', 24, false);
 										tower.antialiasing = true;
