@@ -7,6 +7,9 @@ import sys.thread.Thread;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import modloader.PolymodHandler;
+import modloader.ModList;
+import modloader.ModsMenu;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.input.keyboard.FlxKey;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
@@ -68,9 +71,25 @@ class TitleState extends MusicBeatState
 				}
 			}
 		}
+		if (sys.FileSystem.exists('mods/' + ModsMenu.coolId + '/'))
+		{
+			var folders:Array<String> = [];
+			for (file in sys.FileSystem.readDirectory('mods/' + ModsMenu.coolId + '/'))
+			{
+				var path = haxe.io.Path.join(['mods/' + ModsMenu.coolId + '/', file]);
+				if (sys.FileSystem.isDirectory(path))
+				{
+					folders.push(file);
+				}
+			}
+		}
 		#end
 
 		PlayerSettings.init();
+
+		#if MODS
+		ModList.load();
+		#end
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
@@ -433,6 +452,10 @@ class TitleState extends MusicBeatState
 			FlxG.camera.flash(FlxColor.WHITE, 4);
 			remove(credGroup);
 			skippedIntro = true;
+
+			#if MODS
+			ModList.load();
+			#end
 		}
 	}
 }

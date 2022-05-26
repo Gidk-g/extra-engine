@@ -5,6 +5,7 @@
 				0,
 				0
 			],
+			"indices": [],
 			"anim": "idle",
 			"loop": false,
 			"fps": 24,
@@ -15,6 +16,7 @@
 				0,
 				-30
 			],
+			"indices": [],
 			"anim": "singDOWN",
 			"loop": false,
 			"fps": 24,
@@ -25,6 +27,7 @@
 				-6,
 				50
 			],
+			"indices": [],
 			"anim": "singUP",
 			"loop": false,
 			"fps": 24,
@@ -35,6 +38,7 @@
 				0,
 				27
 			],
+			"indices": [],
 			"anim": "singRIGHT",
 			"loop": false,
 			"fps": 24,
@@ -45,6 +49,7 @@
 				-10,
 				10
 			],
+			"indices": [],
 			"anim": "singLEFT",
 			"loop": false,
 			"fps": 24,
@@ -53,10 +58,6 @@
 	],
 	"no_antialiasing": false,
 	"image": "characters/DADDY_DEAREST",
-	"position": [
-		0,
-		0
-	],
 	"cameraPosition": [
 		0,
 		0

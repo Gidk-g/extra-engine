@@ -2,5 +2,3 @@ gf
 gf-car
 gf-christmas
 gf-pixel
-gf-tankmen
-pico-speaker

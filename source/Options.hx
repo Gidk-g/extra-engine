@@ -269,3 +269,25 @@ class RatingOption extends Option
 		return "Rating Counter";
 	}
 }
+
+class FlashingMenuOption extends Option
+{
+	public function new()
+	{
+		super();
+		daValue = FlxG.save.data.flashingMenu;
+	}
+
+	public override function press():Bool
+	{
+		FlxG.save.data.flashingMenu = !FlxG.save.data.flashingMenu;
+		daValue = FlxG.save.data.flashingMenu;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Flashing Menu";
+	}
+}

@@ -7,6 +7,10 @@ import openfl.utils.Assets as OpenFlAssets;
 import openfl.display.BitmapData;
 import flixel.graphics.FlxGraphic;
 import lime.utils.Assets;
+import modloader.PolymodHandler;
+import modloader.ModsMenu;
+import modloader.ModsMenuOption;
+import modloader.ModList;
 import flash.media.Sound;
 #if MODS
 import sys.io.File;
@@ -22,14 +26,13 @@ class Paths
 
 	public static var localTrackedAssets:Array<String> = [];
 	public static var currentTrackedSounds:Map<String, Sound> = [];
-
+	public static var coolMods:ModsMenu;
 	static public var modDir:String = null;
-
 	public static var customImagesLoaded:Map<String, Bool> = new Map<String, Bool>();
 	public static var customSoundsLoaded:Map<String, Sound> = new Map();
 
 	public static var ignoredFolders:Array<String> = [
-		'custom_characters', 'images', 'data', 'songs', 'music', 'sounds', 'videos'
+		'custom_characters', 'images', 'data', 'songs', 'music', 'sounds', 'stages', 'videos'
 	];
 
 	static public function setCurrentLevel(name:String)
@@ -37,25 +40,21 @@ class Paths
 		currentLevel = name.toLowerCase();
 	}
 
-	public static function getPath(file:String, type:AssetType, ?library:Null<String> = null)
+	public static function getPath(file:String, type:AssetType, ?library:Null<String>)
 	{
 		if (library != null)
 			return getLibraryPath(file, library);
-
+	
 		if (currentLevel != null)
 		{
-			var levelPath:String = '';
-			if(currentLevel != 'shared') {
-				levelPath = getLibraryPathForce(file, currentLevel);
-				if (OpenFlAssets.exists(levelPath, type))
-					return levelPath;
-			}
-
+			var levelPath = getLibraryPathForce(file, currentLevel);
+			if (OpenFlAssets.exists(levelPath, type))
+				return levelPath;
+	
 			levelPath = getLibraryPathForce(file, "shared");
 			if (OpenFlAssets.exists(levelPath, type))
 				return levelPath;
 		}
-
 		return getPreloadPath(file);
 	}
 
@@ -95,9 +94,34 @@ class Paths
 		return getPath('data/$key.txt', TEXT, library);
 	}
 
+	inline static public function stageData(key:String)
+	{
+		#if MODS
+		if (FileSystem.exists(modStageData(key)))
+			return modStageData(key);
+		#end
+
+		return 'assets/stages/$key/data.json';
+	}
+
+	inline static public function stageScript(key:String)
+	{
+		#if MODS
+		if (FileSystem.exists(modStageScript(key)))
+			return modStageScript(key);
+		#end
+
+		return 'assets/stages/$key/stage.hx';
+	}
+
 	inline static public function txtImage(key:String, ?library:String)
 	{
 		return getPath('images/$key.txt', TEXT, library);
+	}
+
+	inline static public function lua(key:String, ?library:String)
+	{
+		return getPath('$key.lua', TEXT, library);
 	}
 
 	inline static public function xml(key:String, ?library:String)
@@ -286,7 +310,15 @@ class Paths
 				}
 			}
 		}
-
+		if (modDir != null && modDir.length > 0)
+		{
+			var fileToCheck:String = mods(modDir + '/' + key);
+			if (FileSystem.exists(fileToCheck) && ModList.getModEnabled(modDir))
+			{
+				return fileToCheck;
+			}
+		}
+	
 		return 'mods/' + key;
 		#else
 		return key;
@@ -330,5 +362,20 @@ class Paths
 	inline static public function modSound(path:String, key:String)
 	{
 		return modFolder(path + '/' + key + '.' + SOUND_EXT);
+	}
+
+	inline static public function modStageData(key:String)
+	{	
+		return modFolder('stages/' + key + 'data.json');
+	}
+
+	inline static public function modStageScript(key:String)
+	{	
+		return modFolder('stages/' + key + 'stage.hx');
+	}
+
+	inline static public function modLua(key:String)
+	{
+		return modFolder('$key.lua');
 	}
 }

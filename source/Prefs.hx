@@ -6,14 +6,20 @@ import flixel.graphics.FlxGraphic;
 
 class Prefs {
 	public static var globalAntialiasing:Bool = true;
+	public static var distractions:Bool = true;
 
 	public static function saveSettings() {
 		FlxG.save.data.globalAntialiasing = globalAntialiasing;
+		FlxG.save.data.distractions = distractions;
 	}
 
 	public static function loadPrefs() {
 		if(FlxG.save.data.globalAntialiasing != null) {
 			globalAntialiasing = FlxG.save.data.Antialiasing;
+		}
+
+		if(FlxG.save.data.distractions != null) {
+			distractions = FlxG.save.data.distractions;
 		}
 	}
 
@@ -33,6 +39,9 @@ class Prefs {
 
 		if (FlxG.save.data.showTimeBar == null)
 			FlxG.save.data.showTimeBar = true;
+
+		if (FlxG.save.data.flashingMenu == null)
+			FlxG.save.data.flashingMenu = true;
 
 		if (FlxG.save.data.noteSplashes == null)
 			FlxG.save.data.showTimeBar = true;

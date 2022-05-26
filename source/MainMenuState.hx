@@ -6,6 +6,7 @@ import Discord.DiscordClient;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.FlxCamera;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.effects.FlxFlicker;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -16,6 +17,7 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import io.newgrounds.NG;
+import modloader.ModsMenu;
 import lime.app.Application;
 
 using StringTools;
@@ -25,11 +27,24 @@ class MainMenuState extends MusicBeatState
 	var curSelected:Int = 0;
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
+	private var camGame:FlxCamera;
+	private var camFunny:FlxCamera;
 
 	#if !switch
-	var optionShit:Array<String> = ['story_mode', 'freeplay','donate', 'options'];
+	var optionShit:Array<String> = [
+		'story_mode',
+	    'freeplay',
+		#if MODS
+		'mods',
+		#end
+		'donate',
+		'options'
+	];
 	#else
-	var optionShit:Array<String> = ['story_mode', 'freeplay'];
+	var optionShit:Array<String> = [
+		'story_mode',
+		'freeplay'
+	];
 	#end
 
 	var magenta:FlxSprite;
@@ -42,6 +57,14 @@ class MainMenuState extends MusicBeatState
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
 		#end
+
+		camGame = new FlxCamera();
+		camFunny = new FlxCamera();
+		camFunny.bgColor.alpha = 0;
+
+		FlxG.cameras.reset(camGame);
+		FlxG.cameras.add(camFunny);
+		FlxCamera.defaultCameras = [camGame];
 
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
@@ -168,7 +191,9 @@ class MainMenuState extends MusicBeatState
 					selectedSomethin = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 
-					FlxFlicker.flicker(magenta, 1.1, 0.15, false);
+					if (FlxG.save.data.flashingMenu) {
+						FlxFlicker.flicker(magenta, 1.1, 0.15, false);
+					}
 
 					menuItems.forEach(function(spr:FlxSprite)
 					{
@@ -196,9 +221,11 @@ class MainMenuState extends MusicBeatState
 									case 'freeplay':
 										FlxG.switchState(new FreeplayState());
 										trace("Freeplay Menu Selected");
+									#if MODS
+									case 'mods':
+										MusicBeatState.switchState(new ModsMenu());
+                                    #end
 									case 'options':
-										FlxTransitionableState.skipNextTransIn = true;
-										FlxTransitionableState.skipNextTransOut = true;
 										FlxG.switchState(new OptionsMenu());
 								}
 							});

@@ -1,0 +1,7 @@
+{
+    "name": "stage",
+    "bfPosition": [770, 450],
+    "gfPosition": [400, 130],
+    "dadPosition": [100, 100],
+    "defaultCamZoom": 0.9
+}

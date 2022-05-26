@@ -34,7 +34,7 @@ class Song
 	public var needsVoices:Bool = true;
 	public var speed:Float = 1;
 
-	public var stage:String = PlayState.curStage;
+	public var stage:String = 'stage';
 	public var player1:String = 'bf';
 	public var player2:String = 'dad';
 	public var gfVersion:String = 'gf';

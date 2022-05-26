@@ -44,16 +44,9 @@
             "locked": false
         },
         {
-            "songs": ["Ugh", "Guns", "Stress"],
-            "songCharacters": ["tankman"],
-            "weekNum": 7,
-            "isPixelWeek": true,
-            "locked": false
-        },
-        {
             "songs": ["test"],
             "songCharacters": ["bf-pixel"],
-            "weekNum": 8,
+            "weekNum": 7,
             "locked": true
         }
     ]
