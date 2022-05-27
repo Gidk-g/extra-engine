@@ -58,6 +58,19 @@ class Paths
 		return getPreloadPath(file);
 	}
 
+	static public function exists(path:String):Bool
+	{
+		var doesIt:Bool = false;
+
+		#if MODS
+		doesIt = FileSystem.exists(path);
+		#else
+		doesIt = Assets.exists(path);
+		#end
+
+		return doesIt;
+	}
+
 	static public function getLibraryPath(file:String, library = "preload")
 	{
 		return if (library == "preload" || library == "default") getPreloadPath(file); else getLibraryPathForce(file, library);
@@ -112,6 +125,11 @@ class Paths
 		#end
 
 		return 'assets/stages/$key/stage.hx';
+	}
+
+	inline static public function modchart(key:String, ?library:String)
+	{
+		return getPath('data/$key.hx', TEXT, library);
 	}
 
 	inline static public function txtImage(key:String, ?library:String)
@@ -357,6 +375,11 @@ class Paths
 	inline static public function modsJson(key:String)
 	{	
 		return modFolder('data/' + key + '.json');
+	}
+
+	inline static public function modModchart(key:String, ?library:String) // I am so fucking terrified
+	{
+		return 'mods' + getPath('data/$key.hx', TEXT, library);
 	}
 
 	inline static public function modSound(path:String, key:String)

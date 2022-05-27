@@ -123,8 +123,14 @@ class PlayState extends MusicBeatState
 	public var health:Float = 1;
 	public var combo:Int = 0;
 
+	// Modchart shit
+	private var executeModchart = false;
+
 	// stage hscript shit
 	public var stageInterp:Interp;
+
+	var modchart:String;
+	var ast:Dynamic;
 
 	private var healthBarBG:FlxSprite;
 	private var healthBar:FlxBar;
@@ -221,6 +227,36 @@ class PlayState extends MusicBeatState
 
 		persistentUpdate = true;
 		persistentDraw = true;
+
+		executeModchart = Paths.exists(Paths.modchart(songLowercase + "/modchart"));
+
+		#if MODS
+		if (executeModchart)
+		{
+			executeModchart = FileSystem.exists(Paths.modModchart(songLowercase + "/modchart"));
+			trace("EXECUTING A MOD'S MODCHART: " + executeModchart + "\nMODCHART PATH: " + Paths.modModchart(songLowercase + "/modchart"));
+		}
+		#end
+
+		if (executeModchart)
+		{
+			interp = new Interp();
+
+			if (modchart == null)
+			{
+				#if MODS
+				modchart = File.getContent(Paths.modchart(songLowercase + "/modchart"));
+				#else
+				modchart = Assets.getText(Paths.modchart(songLowercase + "/modchart"));
+				#end
+			}
+
+			ast = parser.parseString(modchart);
+			interpVariables(interp);
+			interp.execute(ast);
+		}
+
+		trace(executeModchart ? "Modchart exists!" : "Modchart doesn't exist, tried path " + Paths.modchart(songLowercase + "/modchart"));
 
 		misses = 0;
 
@@ -538,6 +574,16 @@ class PlayState extends MusicBeatState
 		scoreTxt.cameras = [camHUD];
 		doof.cameras = [camHUD];
 
+		trace('starting');
+
+		if (executeModchart)
+		{
+			interpVariables(interp);
+
+			if (interp.variables.get("onStart") != null)
+				interp.variables.get("onStart")();
+		}
+
 		setOnLuas('startingSong', startingSong);
 
 		var luaFile:String = 'data/' + PlayState.SONG.song.toLowerCase() + '/modchart';
@@ -818,6 +864,12 @@ class PlayState extends MusicBeatState
 	{
 		inCutscene = false;
 
+		if (executeModchart)
+		{
+			if (interp.variables.get("onStartCountdown") != null)
+				interp.variables.get("onStartCountdown")();
+		}
+
 		if (startedCountdown)
 		{
 			callOnLuas('startCountdown', []);
@@ -966,6 +1018,12 @@ class PlayState extends MusicBeatState
 		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconRPC, true, songLength);
 		#end
 		callOnLuas('startSong', []);
+
+		if (executeModchart)
+		{
+			if (interp.variables.get("onSongStart") != null)
+				interp.variables.get("onSongStart")();
+		}
 	}
 
 	var debugNum:Int = 0;
@@ -1202,6 +1260,9 @@ class PlayState extends MusicBeatState
 		#end
 
 		interpVariables(stageInterp);
+
+		if (executeModchart)
+			interpVariables(interp);
 
 		if (FlxG.keys.justPressed.NINE)
 		{
@@ -1758,6 +1819,12 @@ class PlayState extends MusicBeatState
 		});
 	    }
 
+		if (executeModchart)
+		{
+			if (interp.variables.get("onUpdate") != null)
+				interp.variables.get("onUpdate")(elapsed);
+		}
+
 		setOnLuas('health', health);
 		for (i in 0...playerStrums.length)
 		{
@@ -1797,6 +1864,12 @@ class PlayState extends MusicBeatState
 		#if SCRIPTS
 		var ret:Dynamic = callOnLuas('endSong', []);
 		#end
+
+		if (executeModchart)
+		{
+			if (interp.variables.get("onSongEnd") != null)
+				interp.variables.get("onSongEnd")();
+		}
 
 		canPause = false;
 		FlxG.sound.music.volume = 0;
@@ -2445,6 +2518,12 @@ class PlayState extends MusicBeatState
 		if (stageInterp.variables.get("stepHit") != null)
 			stageInterp.variables.get("stepHit")(curStep);
 
+		if (executeModchart)
+		{
+			if (interp.variables.get("stepHit") != null)
+				interp.variables.get("stepHit")(curStep);
+		}
+
 		#if desktop
 		setOnLuas('songLength', songLength);
 		#end
@@ -2462,6 +2541,12 @@ class PlayState extends MusicBeatState
 		if (generatedMusic)
 		{
 			notes.sort(FlxSort.byY, FlxSort.DESCENDING);
+		}
+
+		if (executeModchart)
+		{
+			if (interp.variables.get("beatHit") != null)
+				interp.variables.get("beatHit")(curBeat);
 		}
 
 		if (SONG.notes[Math.floor(curStep / 16)] != null)
