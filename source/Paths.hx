@@ -372,6 +372,11 @@ class Paths
 		return modFolder(key + '.json');
 	}
 	
+	inline static public function modTxt(key:String)
+	{
+		return modFolder('$key.txt');
+	}
+
 	inline static public function modsJson(key:String)
 	{	
 		return modFolder('data/' + key + '.json');

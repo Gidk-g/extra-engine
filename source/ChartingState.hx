@@ -31,6 +31,10 @@ import openfl.events.IOErrorEvent;
 import openfl.media.Sound;
 import openfl.net.FileReference;
 import openfl.utils.ByteArray;
+#if sys
+import sys.FileSystem;
+import sys.io.File;
+#end
 
 using StringTools;
 
@@ -274,8 +278,47 @@ class ChartingState extends MusicBeatState
 		stepperBPM.name = 'song_bpm';
 
 		var characters:Array<String> = CoolUtil.coolTextFile(Paths.txt('characterList'));
+		if (FileSystem.exists(Paths.modTxt('data/characterList')) && FileSystem.exists(Paths.txt('characterList')))
+		{
+			characters = File.getContent(Paths.modTxt('data/characterList')).trim().split('\n');
+
+			for (i in 0...characters.length)
+			{
+				characters[i] = characters[i].trim();
+			}
+		}
+		else
+		{
+			characters = CoolUtil.coolTextFile(Paths.txt('characterList'));
+		}
 		var stages:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
 		var gfVersions:Array<String> = CoolUtil.coolTextFile(Paths.txt('gfVersionList'));
+		if (FileSystem.exists(Paths.modTxt('data/stageList')) && FileSystem.exists(Paths.txt('stageList')))
+		{
+			stages = File.getContent(Paths.modTxt('data/stageList')).trim().split('\n');
+
+			for (i in 0...stages.length)
+			{
+				stages[i] = stages[i].trim();
+			}
+		}
+		else
+		{
+			stages = CoolUtil.coolTextFile(Paths.txt('stageList'));
+		}
+		if (FileSystem.exists(Paths.modTxt('data/gfVersionList')) && FileSystem.exists(Paths.txt('gfVersionList')))
+		{
+			gfVersions = File.getContent(Paths.modTxt('data/gfVersionList')).trim().split('\n');
+
+			for (i in 0...gfVersions.length)
+			{
+				gfVersions[i] = gfVersions[i].trim();
+			}
+		}
+		else
+		{
+			gfVersions = CoolUtil.coolTextFile(Paths.txt('gfVersionList'));
+		}
 
 		var stageDropDown = new FlxUIDropDownMenuCustom(140, 200, FlxUIDropDownMenuCustom.makeStrIdLabelArray(stages, true), function(stage:String)
 		{

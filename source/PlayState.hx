@@ -702,6 +702,10 @@ class PlayState extends MusicBeatState
 		// other shit
 		funnyInterp.variables.set("MCFuncs", ModchartFunctions);
 
+		#if VIDEOS_ALLOWED
+		funnyInterp.variables.set("startVideo", startVideo);
+	    #end
+
 		// ui
 		funnyInterp.variables.set("healthBar", healthBar);
 		funnyInterp.variables.set("strumLine", strumLine);
