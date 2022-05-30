@@ -367,11 +367,6 @@ class Paths
 		return modFolder('data/' + key + '.json');
 	}
 
-	inline static public function modModchart(key:String, ?library:String) // I am so fucking terrified
-	{
-		return 'mods' + getPath('data/$key.hx', TEXT, library);
-	}
-
 	inline static public function modSound(path:String, key:String)
 	{
 		return modFolder(path + '/' + key + '.' + SOUND_EXT);
