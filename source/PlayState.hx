@@ -142,6 +142,17 @@ class PlayState extends MusicBeatState
 
 	var ratingCntr:FlxText;
 
+	// API stuff
+	public function addObject(object:FlxBasic)
+	{
+		add(object);
+	}
+
+	public function removeObject(object:FlxBasic)
+	{
+		remove(object);
+	}
+
 	private var totalNotesHit:Float = 0;
 
 	private var generatedMusic:Bool = false;
