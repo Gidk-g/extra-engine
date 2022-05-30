@@ -230,25 +230,13 @@ class PlayState extends MusicBeatState
 
 		executeModchart = Paths.exists(Paths.modchart(songLowercase + "/modchart"));
 
-		#if MODS
-		if (executeModchart)
-		{
-			executeModchart = FileSystem.exists(Paths.modModchart(songLowercase + "/modchart"));
-			trace("EXECUTING A MOD'S MODCHART: " + executeModchart + "\nMODCHART PATH: " + Paths.modModchart(songLowercase + "/modchart"));
-		}
-		#end
-
 		if (executeModchart)
 		{
 			interp = new Interp();
 
 			if (modchart == null)
 			{
-				#if MODS
-				modchart = File.getContent(Paths.modchart(songLowercase + "/modchart"));
-				#else
 				modchart = Assets.getText(Paths.modchart(songLowercase + "/modchart"));
-				#end
 			}
 
 			ast = parser.parseString(modchart);
@@ -383,11 +371,7 @@ class PlayState extends MusicBeatState
 
 		var stageCheck = SONG.stage != null ? SONG.stage : 'stage';
 
-		#if MODS
-		var stageData = File.getContent(Sys.getCwd() + "/" + Paths.stageData(stageCheck));
-		#else
 		var stageData = Assets.getText(Paths.stageData(stageCheck));
-		#end
 
 		var parsed:StageJSON = cast Json.parse(stageData);
 
@@ -395,11 +379,7 @@ class PlayState extends MusicBeatState
 		defaultCamZoom = parsed.defaultCamZoom != null ? parsed.defaultCamZoom : 1.05;
 		isHalloween = parsed.isHalloween != null ? parsed.isHalloween : false;
 
-		#if MODS
-		var stageScript = File.getContent(Sys.getCwd() + "/" + Paths.stageScript(curStage));
-		#else
 		var stageScript = Assets.getText(Paths.stageScript(curStage));
-		#end
 
 		var ast = parser.parseString(stageScript);
 
@@ -689,30 +669,30 @@ class PlayState extends MusicBeatState
 		funnyInterp.variables.set("Json", Json);
 		funnyInterp.variables.set("Std", Std);
 		funnyInterp.variables.set("Lib", Lib);
-
+	
 		// state funcs
 		funnyInterp.variables.set("add", add);
 		funnyInterp.variables.set("remove", remove);
-
+	
 		// characters
 		funnyInterp.variables.set("boyfriend", boyfriend);
 		funnyInterp.variables.set("dad", dad);
 		funnyInterp.variables.set("gf", gf);
-
+	
 		// other shit
 		funnyInterp.variables.set("MCFuncs", ModchartFunctions);
-
+	
 		#if VIDEOS_ALLOWED
 		funnyInterp.variables.set("startVideo", startVideo);
-	    #end
-
+		#end
+	
 		// ui
 		funnyInterp.variables.set("healthBar", healthBar);
 		funnyInterp.variables.set("strumLine", strumLine);
 		funnyInterp.variables.set("healthBarBG", healthBarBG);
 		funnyInterp.variables.set("iconP1", iconP1);
 		funnyInterp.variables.set("iconP2", iconP2);
-
+	
 		// playstate
 		funnyInterp.variables.set("difficulty", storyDifficulty);
 		funnyInterp.variables.set("daPixelZoom", daPixelZoom);
@@ -734,12 +714,12 @@ class PlayState extends MusicBeatState
 		});
 		funnyInterp.variables.set("noteMiss", noteMiss);
 		funnyInterp.variables.set("goodNoteHit", goodNoteHit);
-
+	
 		// cameras
 		funnyInterp.variables.set("camHUD", camHUD);
 		funnyInterp.variables.set("camGame", camGame);
 		funnyInterp.variables.set("camFollow", camFollow);
-
+	
 		// song
 		funnyInterp.variables.set("songPosition", Conductor.songPosition);
 		funnyInterp.variables.set("song", SONG.song);
@@ -751,13 +731,12 @@ class PlayState extends MusicBeatState
 		funnyInterp.variables.set("crochet", Conductor.crochet);
 		funnyInterp.variables.set("curStep", curStep);
 		funnyInterp.variables.set("curBeat", curBeat);
-
+	
 		// uhh fuckin idk???
 		funnyInterp.variables.set("FlxColor", function(huh:String)
 		{
 			return FlxColor.colorLookup.get(huh);
 		});
-		funnyInterp.variables.set("Prefs", Prefs);
 		funnyInterp.variables.set("FlxTextBorderStyle", {
 			NONE: FlxTextBorderStyle.NONE,
 			SHADOW: FlxTextBorderStyle.SHADOW,
@@ -2141,6 +2120,7 @@ class PlayState extends MusicBeatState
 		if ((upP || rightP || downP || leftP) && !boyfriend.stunned && generatedMusic)
 		{
 			boyfriend.holdTimer = 0;
+
 			var possibleNotes:Array<Note> = [];
 
 			var ignoreList:Array<Int> = [];
@@ -2182,7 +2162,7 @@ class PlayState extends MusicBeatState
 										inIgnoreList = true;
 								}
 								if (!inIgnoreList)
-									badNoteCheck();
+										badNoteCheck(daNote);
 							}
 						}
 					}
@@ -2223,6 +2203,7 @@ class PlayState extends MusicBeatState
 								if (upP || rightP || downP || leftP)
 									noteCheck(leftP, daNote);
 						}
+
 					//this is already done in noteCheck / goodNoteHit
 					if (daNote.wasGoodHit)
 					{
@@ -2231,6 +2212,12 @@ class PlayState extends MusicBeatState
 						daNote.destroy();
 					}
 				 */
+			}
+			else
+			{
+				notes.forEachAlive(function(note:Note) {
+					badNoteCheck(note);
+				});
 			}
 		}
 
@@ -2255,6 +2242,8 @@ class PlayState extends MusicBeatState
 						case 3:
 							if (right)
 								goodNoteHit(daNote);
+						case -1:
+							// do nothing lmfao
 					}
 				}
 			});
@@ -2336,7 +2325,7 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	function badNoteCheck()
+	function badNoteCheck(note:Note)
 	{
 		// just double pasting this shit cuz fuk u
 		// REDO THIS SYSTEM!
@@ -2344,15 +2333,25 @@ class PlayState extends MusicBeatState
 		var rightP = controls.RIGHT_P;
 		var downP = controls.DOWN_P;
 		var leftP = controls.LEFT_P;
+		if (!FlxG.save.data.ghostTapping && !note.missed) {
+				
+			note.missed = true;
 
-		if (leftP)
-			noteMiss(0);
-		if (downP)
-			noteMiss(1);
-		if (upP)
-			noteMiss(2);
-		if (rightP)
-			noteMiss(3);
+			if (note.sustainChildren.length > 0) {
+				for (i in note.sustainChildren) {
+					note.missed = true;
+				}
+			}
+
+			if (leftP)
+				noteMiss(0);
+			if (downP)
+				noteMiss(1);
+			if (upP)
+				noteMiss(2);
+			if (rightP)
+				noteMiss(3);
+		}
 	}
 
 	function noteCheck(keyP:Bool, note:Note):Void
@@ -2361,7 +2360,8 @@ class PlayState extends MusicBeatState
 			goodNoteHit(note);
 		else
 		{
-			badNoteCheck();
+			if (!FlxG.save.data.ghostTapping)
+				badNoteCheck(note);
 		}
 	}
 
@@ -2407,7 +2407,6 @@ class PlayState extends MusicBeatState
 					spr.animation.play('confirm', true);
 				}
 			});
-		
 
 			note.wasGoodHit = true;
 			vocals.volume = 1;

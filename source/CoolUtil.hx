@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxG;
 import lime.utils.Assets;
 
 using StringTools;
@@ -102,5 +103,14 @@ class CoolUtil
 			dumbArray.push(i);
 		}
 		return dumbArray;
+	}
+
+	public static function browserLoad(site:String)
+	{
+		#if linux
+		Sys.command('/usr/bin/xdg-open', [site]);
+		#else
+		FlxG.openURL(site);
+		#end
 	}
 }

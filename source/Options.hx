@@ -291,3 +291,25 @@ class FlashingMenuOption extends Option
 		return "Flashing Menu";
 	}
 }
+
+class GhostTapping extends Option
+{
+	public function new()
+	{
+		super();
+		daValue = FlxG.save.data.ghostTapping;
+	}
+
+	public override function press():Bool
+	{
+		FlxG.save.data.ghostTapping = !FlxG.save.data.ghostTapping;
+		daValue = FlxG.save.data.ghostTapping;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Ghost Tapping";
+	}
+}

@@ -61,12 +61,7 @@ class Paths
 	static public function exists(path:String):Bool
 	{
 		var doesIt:Bool = false;
-
-		#if MODS
-		doesIt = FileSystem.exists(path);
-		#else
 		doesIt = Assets.exists(path);
-		#end
 
 		return doesIt;
 	}
@@ -109,21 +104,11 @@ class Paths
 
 	inline static public function stageData(key:String)
 	{
-		#if MODS
-		if (FileSystem.exists(modStageData(key)))
-			return modStageData(key);
-		#end
-
 		return 'assets/stages/$key/data.json';
 	}
 
 	inline static public function stageScript(key:String)
 	{
-		#if MODS
-		if (FileSystem.exists(modStageScript(key)))
-			return modStageScript(key);
-		#end
-
 		return 'assets/stages/$key/stage.hx';
 	}
 
@@ -390,16 +375,6 @@ class Paths
 	inline static public function modSound(path:String, key:String)
 	{
 		return modFolder(path + '/' + key + '.' + SOUND_EXT);
-	}
-
-	inline static public function modStageData(key:String)
-	{	
-		return modFolder('stages/' + key + 'data.json');
-	}
-
-	inline static public function modStageScript(key:String)
-	{	
-		return modFolder('stages/' + key + 'stage.hx');
 	}
 
 	inline static public function modLua(key:String)

@@ -1,0 +1,17 @@
+{
+    "main": {
+        "characters": [
+        {
+            "displayName": "Boyfriend",
+            "fileName": "boyfriend"
+        },
+        {
+            "displayName": "Girlfriend",
+            "fileName": "girlfriend"
+        }
+    ]
+    },
+    "dialogue": [
+        
+    ]
+}

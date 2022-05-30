@@ -1,5 +1,12 @@
 package;
 
+import hscript.Parser;
+import hscript.Interp;
+import haxe.ds.StringMap;
+import sys.FileSystem;
+import flixel.math.FlxPoint;
+import openfl.utils.Assets;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
@@ -9,8 +16,50 @@ import flixel.input.FlxKeyManager;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+import haxe.Json;
 
 using StringTools;
+
+typedef DialogueData = {
+	var name:String;
+	var text:String;
+	var typingSpeed:Float;
+	var anim:String;
+	var ?event:String;
+	var ?eventValues:Array<Dynamic>;
+	var ?spriteData:{x:Float,y:Float,angle:Float,alpha:Float}
+}
+
+class DialogueBoxPlus extends FlxTypedGroup<FlxSprite> {
+	public var x:Float = 0;
+	public var y:Float = 0;
+	public var angle:Float = 0;
+	public var alpha:Float = 1;
+
+	public var data:Array<DialogueData>;
+
+	public var previous(get, never):Int;
+	public var current:Int = 0;
+	public var next(get, never):Int;
+
+	public function new(file:String) {
+		super();
+		data = parse(file);
+	}
+
+	public inline function parse(file:String) {
+		var path:String = Paths.json('dialogue/${PlayState.SONG.song}${PlayState.songEnded ? "-end": ""}');
+		return FileSystem.exists(path) ? Json.parse(Assets.getText(path)) : null;
+	}
+
+	function get_previous():Int {
+		return current - 1;
+	}
+
+	function get_next():Int {
+		return current + 1;
+	}
+}
 
 class DialogueBox extends FlxSpriteGroup
 {

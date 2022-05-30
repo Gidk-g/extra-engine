@@ -44,7 +44,10 @@ class Prefs {
 			FlxG.save.data.flashingMenu = true;
 
 		if (FlxG.save.data.noteSplashes == null)
-			FlxG.save.data.showTimeBar = true;
+			FlxG.save.data.noteSplashes = true;
+
+		if (FlxG.save.data.ghostTapping == null)
+			FlxG.save.data.ghostTapping = true;
 
 		if (FlxG.save.data.downscroll == null)
 			FlxG.save.data.downscroll = false;

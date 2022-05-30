@@ -35,6 +35,7 @@ class OptionsMenu extends MusicBeatState
 		[
 			new DownscrollOption(),
 			new BotplayOption(),
+			new GhostTapping(),
 			new NoteSplashOption(),
 			new FlashingMenuOption(),
 			new TimebarOption(),
