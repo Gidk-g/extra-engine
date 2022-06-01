@@ -41,7 +41,7 @@ jobs:
           haxelib git linc_luajit https://github.com/AndreiRudenko/linc_luajit
           haxelib install hscript
           haxelib install webgl
-          haxelib install djFlixel
+          haxelib git djFlixel https://github.com/john32b/djFlixel
           haxelib install newgrounds
           haxelib install faxe
           haxelib install polymod
@@ -83,7 +83,7 @@ jobs:
           haxelib install flixel-tools
           haxelib install flixel-ui
           haxelib install webgl
-          haxelib install djFlixel
+          haxelib git djFlixel https://github.com/john32b/djFlixel
           haxelib install newgrounds
           haxelib install faxe
           haxelib install flixel-addons
@@ -125,7 +125,7 @@ jobs:
           haxelib git linc_luajit https://github.com/AndreiRudenko/linc_luajit
           haxelib install hscript
           haxelib install webgl
-          haxelib install djFlixel
+          haxelib git djFlixel https://github.com/john32b/djFlixel
           haxelib install newgrounds
           haxelib install faxe
           haxelib install polymod
@@ -168,7 +168,7 @@ jobs:
           haxelib git linc_luajit https://github.com/AndreiRudenko/linc_luajit
           haxelib install hscript
           haxelib install webgl
-          haxelib install djFlixel
+          haxelib git djFlixel https://github.com/john32b/djFlixel
           haxelib install newgrounds
           haxelib install faxe
           haxelib install polymod
