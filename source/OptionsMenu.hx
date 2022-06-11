@@ -201,7 +201,7 @@ class OptionsMenu extends MusicBeatState
 	function quit()
 	{
 		FlxG.save.flush();
-		MusicBeatState.switchState(new MainMenuState());
+		FlxG.switchState(new MainMenuState());
 	}
 
 	function changeSelection(change:Int = 0)

@@ -2,8 +2,8 @@
 	"animations": [
 		{
 			"offsets": [
-				2,
-				0
+				-183,
+				-182
 			],
 			"indices": [],
 			"anim": "idle",
@@ -13,8 +13,8 @@
 		},
 		{
 			"offsets": [
-				0,
-				0
+				-183,
+				-182
 			],
 			"indices": [],
 			"anim": "singDOWN",
@@ -24,8 +24,8 @@
 		},
 		{
 			"offsets": [
-				0,
-				0
+				-183,
+				-182
 			],
 			"indices": [],
 			"anim": "singUP",
@@ -35,8 +35,8 @@
 		},
 		{
 			"offsets": [
-				0,
-				0
+				-183,
+				-182
 			],
 			"indices": [],
 			"anim": "singRIGHT",
@@ -46,8 +46,8 @@
 		},
 		{
 			"offsets": [
-				0,
-				0
+				-183,
+				-182
 			],
 			"indices": [],
 			"anim": "singLEFT",
@@ -59,8 +59,8 @@
 	"no_antialiasing": true,
 	"image": "characters/bfPixel",
 	"cameraPosition": [
-		50,
-		-160
+		0,
+		0
 	],
 	"healthbarColor": [
 		123,
@@ -69,5 +69,5 @@
 	],
 	"flipX": true,
 	"flipY": false,
-	"scale": 6.8
+	"scale": 6
 }

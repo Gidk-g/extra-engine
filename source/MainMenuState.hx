@@ -173,7 +173,7 @@ class MainMenuState extends MusicBeatState
 			if (FlxG.keys.justPressed.SEVEN)
 			{
 				selectedSomethin = true;
-				MusicBeatState.switchState(new EditorMenu());
+				FlxG.switchState(new EditorMenu());
 			}
 
 			if (controls.ACCEPT)
@@ -223,7 +223,7 @@ class MainMenuState extends MusicBeatState
 										trace("Freeplay Menu Selected");
 									#if MODS
 									case 'mods':
-										MusicBeatState.switchState(new ModsMenu());
+										FlxG.switchState(new ModsMenu());
                                     #end
 									case 'options':
 										FlxG.switchState(new OptionsMenu());

@@ -24,6 +24,12 @@ import flixel.addons.display.FlxBackdrop;
 import flixel.graphics.atlas.FlxAtlas;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import shaders.ChromaticAberration;
+import shaders.Grain;
+import shaders.Hq2x;
+import shaders.Overlay;
+import shaders.Scanline;
+import shaders.Tiltshift;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
@@ -42,6 +48,7 @@ import openfl.Lib;
 import flixel.util.FlxAxes;
 import flixel.math.FlxRandom;
 import haxe.Json;
+import ShadersHandler;
 import hscript.Interp;
 import hscript.Parser;
 import lime.utils.Assets;
@@ -85,7 +92,7 @@ class PlayState extends MusicBeatState
 
 	private var vocals:FlxSound;
 
-    public var dad:Character;
+	public var dad:Character;
 	public var gf:Character;
 	public var boyfriend:Boyfriend;
 
@@ -115,6 +122,8 @@ class PlayState extends MusicBeatState
 	public var modchartSounds:Map<String, FlxSound> = new Map();
 
 	public var noteSplashGroup:FlxTypedGroup<NoteSplash>;
+
+	var whosFocused:Character;
 
 	private var camZooming:Bool = false;
 	private var curSong:String = "";
@@ -190,6 +199,8 @@ class PlayState extends MusicBeatState
 
 	public var updateTime:Bool = true;
 	public var songPercent:Float = 0;
+
+	var events = [];
 
 	public static var songEnded:Bool = false;
 
@@ -445,6 +456,20 @@ class PlayState extends MusicBeatState
 
 		generateSong(SONG.song);
 
+		if (FileSystem.exists("mods/data/" + SONG.song.toLowerCase() + "/events.txt")){
+			var daList:Array<String> = File.getContent("mods/data/" + SONG.song.toLowerCase() + "/events.txt").trim().split('\n');
+
+			for (i in 0...daList.length)
+			{
+				daList[i] = daList[i].trim();
+			}
+
+			events = daList;
+			trace(events);
+		}
+		else if (FileSystem.exists(Paths.file("data/" + SONG.song.toLowerCase() + "/events.txt")))
+			events = CoolUtil.coolTextFile(Paths.file('data/' + SONG.song.toLowerCase() + '/events.txt'));
+
 		// add(strumLine);
 
 		camFollow = new FlxObject(0, 0, 1, 1);
@@ -655,8 +680,10 @@ class PlayState extends MusicBeatState
 	function interpVariables(funnyInterp:Interp):Void
 	{
 		// imports
+		funnyInterp.variables.set("ChromaticAberrations", ChromaticAberration);
 		funnyInterp.variables.set("BackgroundDancer", BackgroundDancer);
 		funnyInterp.variables.set("BackgroundGirls", BackgroundGirls);
+		funnyInterp.variables.set("ShadersHandler", ShadersHandler);
 		funnyInterp.variables.set("FlxAtlasFrames", FlxAtlasFrames);
 		funnyInterp.variables.set("FlxTypedGroup", FlxTypedGroup);
 		funnyInterp.variables.set("FlxBackdrop", FlxBackdrop);
@@ -670,14 +697,19 @@ class PlayState extends MusicBeatState
 		funnyInterp.variables.set("FlxSound", FlxSound);
 		funnyInterp.variables.set("FlxMath", FlxMath);
 		funnyInterp.variables.set("FlxAngle", FlxAngle);
+		funnyInterp.variables.set("Scanline", Scanline);
+		funnyInterp.variables.set("Tiltshift", Tiltshift);
 		funnyInterp.variables.set("FlxRect", FlxRect);
 		funnyInterp.variables.set("FlxEase", FlxEase);
 		funnyInterp.variables.set("FlxText", FlxText);
+		funnyInterp.variables.set("Overlay", Overlay);
+		funnyInterp.variables.set("Grain", Grain);
 		funnyInterp.variables.set("Paths", Paths);
 		funnyInterp.variables.set("Math", Math);
 		funnyInterp.variables.set("Note", Note);
 		funnyInterp.variables.set("FlxG", FlxG);
 		funnyInterp.variables.set("Json", Json);
+		funnyInterp.variables.set("Hq2x", Hq2x);
 		funnyInterp.variables.set("Std", Std);
 		funnyInterp.variables.set("Lib", Lib);
 	
@@ -1853,6 +1885,8 @@ class PlayState extends MusicBeatState
 		}
 	}
 
+	var waitTime:Float = Conductor.crochet / 1500;
+
 	public function endSong():Void
 	{
 		#if SCRIPTS
@@ -2654,5 +2688,18 @@ class PlayState extends MusicBeatState
 			luaArray[i].set(variable, arg);
 		}
 		#end
+	}
+
+	function set_whosFocused(value:Character):Character
+	{
+		if (whosFocused != value && executeModchart)
+		{
+			if (interp.variables.get("onFocusChange") != null)
+				interp.variables.get("onFocusChange")(value);
+		}
+
+		whosFocused = value;
+
+		return value;
 	}
 }

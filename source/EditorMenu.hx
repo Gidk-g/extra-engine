@@ -110,7 +110,7 @@ class EditorMenu extends MusicBeatState
 		}
 
 		if (controls.BACK && !confirming)
-			MusicBeatState.switchState(new MainMenuState());
+			FlxG.switchState(new MainMenuState());
 
 		if (controls.ACCEPT && !confirming)
 		{

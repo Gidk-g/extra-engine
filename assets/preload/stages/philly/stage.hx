@@ -137,6 +137,7 @@ function updateTrainPos():Void
 
 function trainReset():Void
 {
+	gf.danced = false;
     gf.specialAnim = true;
     gf.playAnim('hairFall');
     phillyTrain.x = FlxG.width + 200;

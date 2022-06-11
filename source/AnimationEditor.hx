@@ -280,7 +280,7 @@ class AnimationEditor extends MusicBeatState
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
 			FlxG.mouse.visible = false;
-			MusicBeatState.switchState(new EditorMenu());
+			FlxG.switchState(new EditorMenu());
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 		}
 
