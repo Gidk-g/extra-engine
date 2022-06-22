@@ -56,6 +56,7 @@ import openfl.display.BlendMode;
 import openfl.display.StageQuality;
 import openfl.filters.ShaderFilter;
 #if sys
+import Sys;
 import sys.io.File;
 import sys.FileSystem;
 #end
@@ -206,7 +207,7 @@ class PlayState extends MusicBeatState
 
 	var songLowercase = StringTools.replace(PlayState.SONG.song, " ", "-").toLowerCase();
 
-	var defaultCamZoom:Float = 1.05;
+	public var defaultCamZoom:Float = 1.05;
 
 	// how big to stretch the pixel art assets
 	public static var daPixelZoom:Float = 6;
@@ -393,7 +394,11 @@ class PlayState extends MusicBeatState
 
 		var stageCheck = SONG.stage != null ? SONG.stage : 'stage';
 
+		#if MODS
+		var stageData = File.getContent(Sys.getCwd() + Paths.stageData(stageCheck));
+		#else
 		var stageData = Assets.getText(Paths.stageData(stageCheck));
+		#end
 
 		var parsed:StageJSON = cast Json.parse(stageData);
 
@@ -401,7 +406,11 @@ class PlayState extends MusicBeatState
 		defaultCamZoom = parsed.defaultCamZoom != null ? parsed.defaultCamZoom : 1.05;
 		isHalloween = parsed.isHalloween != null ? parsed.isHalloween : false;
 
+		#if MODS
+		var stageScript = File.getContent(Sys.getCwd() + Paths.stageScript(curStage));
+		#else
 		var stageScript = Assets.getText(Paths.stageScript(curStage));
+		#end
 
 		var ast = parser.parseString(stageScript);
 
@@ -697,6 +706,7 @@ class PlayState extends MusicBeatState
 		funnyInterp.variables.set("FlxSound", FlxSound);
 		funnyInterp.variables.set("FlxMath", FlxMath);
 		funnyInterp.variables.set("FlxAngle", FlxAngle);
+		funnyInterp.variables.set("BGSprite", BGSprite);
 		funnyInterp.variables.set("Scanline", Scanline);
 		funnyInterp.variables.set("Tiltshift", Tiltshift);
 		funnyInterp.variables.set("FlxRect", FlxRect);
@@ -774,6 +784,7 @@ class PlayState extends MusicBeatState
 		funnyInterp.variables.set("crochet", Conductor.crochet);
 		funnyInterp.variables.set("curStep", curStep);
 		funnyInterp.variables.set("curBeat", curBeat);
+		funnyInterp.variables.set("curSong", curSong);
 	
 		// uhh fuckin idk???
 		funnyInterp.variables.set("FlxColor", function(huh:String)
@@ -1316,7 +1327,7 @@ class PlayState extends MusicBeatState
 		super.update(elapsed);
 		callOnLuas('update', [elapsed]);
 
-		ratingCntr.text = 'Sicks:${sicks}\nGoods:${goods}\nBads:${bads}\nShits:${shits}\nScore:${songScore}';
+		ratingCntr.text = 'Sicks:${sicks}\nGoods:${goods}\nBads:${bads}\nShits:${shits}\nMisses:${misses}\nScore:${songScore}';
 
 		scoreTxt.text = 'Score:${songScore} | Misses:${misses} | Rating:${ratingTxt}';
 
